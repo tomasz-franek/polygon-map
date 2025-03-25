@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: polygonMap
+
+  data:
+    mongodb:
+      user: user
+      password: password
+      uri: mongodb://127.0.0.1:27017/polygonMap

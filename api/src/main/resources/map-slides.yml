@@ -1,0 +1,147 @@
+openapi: "3.0.4"
+info:
+  title: PolygonMap App
+  description: Polygon model.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /slides/{mapSlideShowId}:
+    get:
+      operationId: getSlideShow
+      parameters:
+        - name: mapSlideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/MapSlideShowId'
+      tags:
+        - slides
+      responses:
+        '200':
+          description: returned MapSlideShow object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapSlideShow'
+        '404':
+          description: MapSlideShow not found
+    patch:
+      operationId: updateSlideShow
+      tags:
+        - slides
+      parameters:
+        - name: mapSlideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/MapSlideShowId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MapSlideShow'
+      responses:
+        '204':
+          description: updated MapSlideShow object
+        '404':
+          description: MapSlideShow not found
+  /slides:
+    post:
+      operationId: saveMapSlideShow
+      tags:
+        - slides
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MapSlideShow'
+      responses:
+        '201':
+          description: created MapSlideShow object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mapSlideShowId:
+                    $ref: '#/components/schemas/MapSlideShowId'
+
+components:
+  schemas:
+    SlideId:
+      type: string
+
+    MapSlideShowId:
+      type: string
+
+    MapSlideShowEnum:
+      enum:
+        - map
+        - route
+      default: 'map'
+
+    MapSlideShow:
+      type: object
+      required:
+        - id
+        - title
+        - version
+        - createdDate
+        - createdUser
+        - lastModifiedDate
+        - lastModifiedUser
+        - hash
+        - mapSlides
+        - centerPoint
+        - mapZoom
+      properties:
+        id:
+          type: string
+        mapSlideShowId:
+          type: string
+        centerPoint:
+          $ref: 'polygon.yml#/components/schemas/Point'
+        mapZoom:
+          type: number
+          format: int32
+        title:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        nextVersion:
+          type: string
+        prevVersion:
+          type: string
+        createdDate:
+          type: string
+        createdUser:
+          type: string
+        lastModifiedDate:
+          type: string
+        lastModifiedUser:
+          type: string
+        hash:
+          type: string
+        mapSlides:
+          type: array
+          items:
+            $ref: '#/components/schemas/MapSlide'
+    MapSlide:
+      type: object
+      required:
+        - slideId
+        - polygons
+      properties:
+        slideId:
+          type: string
+        nextSlide:
+          type: string
+        prevSlide:
+          type: string
+        polygons:
+          type: array
+          items:
+            $ref: 'polygon.yml#/components/schemas/Polygon'

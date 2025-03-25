@@ -1,0 +1,99 @@
+openapi: "3.0.4"
+info:
+  title: PolygonMap App
+  description: Polygon model.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /polygon/{polygonId}:
+    get:
+      operationId: getPolygon
+      parameters:
+        - name: polygonId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PolygonId'
+      tags:
+        - polygon
+      responses:
+        '200':
+          description: returned Polygon object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Polygon'
+        '404':
+          description: Polygon not found
+    patch:
+      operationId: updatePolygon
+      parameters:
+        - name: polygonId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PolygonId'
+      tags:
+        - polygon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Polygon'
+      responses:
+        '204':
+          description: Polygon updated
+        '404':
+          description: Polygon not found
+  /polygon:
+    post:
+      operationId: savePolygon
+      tags:
+        - polygon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Polygon'
+      responses:
+        '201':
+          description: created Polygon
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  polygonId:
+                    $ref: '#/components/schemas/PolygonId'
+
+components:
+  schemas:
+    Polygon:
+      type: object
+      required:
+        - points
+        - id
+      properties:
+        id:
+          type: string
+        polygonId:
+          $ref: '#/components/schemas/PolygonId'
+        color:
+          type: integer
+        points:
+          type: array
+          items:
+            $ref: '#/components/schemas/Point'
+    Point:
+      type: object
+      required:
+        - longitude
+        - latitude
+      properties:
+        longitude:
+          type: number
+        latitude:
+          type: number
+    PolygonId:
+      type: string
