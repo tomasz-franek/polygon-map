@@ -2,37 +2,95 @@ package org.polygonMap.backend.services;
 
 import lombok.AllArgsConstructor;
 import org.polygonMap.backend.exceptions.NotFoundEntityException;
-import org.polygonMap.backend.repositories.MapSlideShowRepository;
-import org.polygonMap.model.MapSlideShow;
+import org.polygonMap.backend.repositories.SlideShowRepository;
+import org.polygonMap.model.Polygon;
+import org.polygonMap.model.Slide;
+import org.polygonMap.model.SlideShow;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class SlidesServiceImpl implements SlidesService {
 
-    private MapSlideShowRepository mapSlideShowRepository;
+    private SlideShowRepository slideShowRepository;
 
-    @Override
-    public MapSlideShow getSlideShow(String mapSlideShowId) {
-        return mapSlideShowRepository.findByMapSlideShowId(mapSlideShowId);
-    }
-
-    @Override
-    public String saveMapSlideShow(MapSlideShow mapSlideShow) {
-        mapSlideShow.setMapSlideShowId(UUID.randomUUID().toString());
-        return mapSlideShowRepository.insert(mapSlideShow).getMapSlideShowId();
-    }
-
-    @Override
-    public void updateSlideShow(String mapSlideShowId, MapSlideShow mapSlideShow) {
-        MapSlideShow mapSlideShowEntity = mapSlideShowRepository.findByMapSlideShowId(mapSlideShowId);
-        if (mapSlideShowEntity == null) {
-            throw new NotFoundEntityException(MapSlideShow.class, mapSlideShowId);
+    public SlideShow getSlideShow(String slideShowId) {
+        SlideShow slideShowEntity = slideShowRepository.findBySlideShowId(slideShowId);
+        if (slideShowEntity == null) {
+            throw new NotFoundEntityException(SlideShow.class, slideShowId);
         }
-        mapSlideShowEntity.setMapSlides(mapSlideShow.getMapSlides());
-        mapSlideShowEntity.setCenterPoint(mapSlideShow.getCenterPoint());
-        mapSlideShowRepository.save(mapSlideShowEntity);
+        return slideShowEntity;
+    }
+
+    @Override
+    public String saveSlideShow(SlideShow slideShow) {
+        slideShow.setSlideShowId(UUID.randomUUID().toString());
+        return slideShowRepository.insert(slideShow).getSlideShowId();
+    }
+
+    @Override
+    public void updateSlideShow(String slideShowId, SlideShow slideShow) {
+        SlideShow slideShowEntity = getSlideShow(slideShowId);
+        slideShowEntity.setSlides(slideShow.getSlides());
+        slideShowEntity.setCenterPoint(slideShow.getCenterPoint());
+        slideShowRepository.save(slideShowEntity);
+    }
+
+
+    @Override
+    public void deleteSlideStep(String slideShowId, String slideId) {
+        SlideShow slideShowEntity = getSlideShow(slideShowId);
+        slideShowEntity.getSlides().removeIf(slide -> slide.equals(slideId));
+        slideShowRepository.save(slideShowEntity);
+    }
+
+    @Override
+    public boolean duplicateSlideStep(String slideShowId, String slideId) {
+        SlideShow slideShowEntity = getSlideShow(slideShowId);
+        int size = slideShowEntity.getSlides().size();
+        for (int i = 0; i < size; i++) {
+            if (slideShowEntity.getSlides().get(i).getSlideId().equals(slideId)) {
+                Slide currentStep = slideShowEntity.getSlides().get(i);
+                Slide newStep = copySlide(currentStep);
+                slideShowEntity.getSlides().add(i + 1, newStep);
+                slideShowRepository.save(slideShowEntity);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateSlide(String slideShowId, String slideId, List<Polygon> polygons) {
+        SlideShow slideShowEntity = getSlideShow(slideShowId);
+        int size = slideShowEntity.getSlides().size();
+        for (int i = 0; i < size; i++) {
+            if (slideShowEntity.getSlides().get(i).getSlideId().equals(slideId)) {
+                Slide currentStep = slideShowEntity.getSlides().get(i);
+                currentStep.getPolygons().clear();
+                currentStep.setPolygons(polygons);
+                slideShowRepository.save(slideShowEntity);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Slide copySlide(Slide currentStep) {
+        return new Slide(UUID.randomUUID().toString(), new ArrayList<>(currentStep.getPolygons()));
+    }
+
+    @Override
+    public String saveSlideStep(String slideShowId, Slide slide) {
+        SlideShow slideShowEntity = getSlideShow(slideShowId);
+
+        slideShowEntity.getSlides().add(copySlide(slide));
+
+        slideShowRepository.save(slideShowEntity);
+        return slideShowEntity.getId();
     }
 }

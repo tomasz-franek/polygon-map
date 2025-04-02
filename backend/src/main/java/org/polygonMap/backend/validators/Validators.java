@@ -30,7 +30,7 @@ public class Validators {
         };
     }
 
-    public Validator validateValuesInNotNullableField(Object entity) {
+    public static Validator validateValuesInNotNullableField(Object entity) {
         return (result) -> {
             Arrays.stream(entity.getClass().getDeclaredFields()).sequential().forEach(field -> {
                 Nullable nullableAnnotation = field.getAnnotation(Nullable.class);

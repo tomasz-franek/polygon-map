@@ -6,82 +6,178 @@ info:
 servers:
   - url: http://localhost:8080/
 paths:
-  /slides/{mapSlideShowId}:
+  /slides/{slideShowId}:
     get:
       operationId: getSlideShow
       parameters:
-        - name: mapSlideShowId
+        - name: slideShowId
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/MapSlideShowId'
+            $ref: '#/components/schemas/SlideShowId'
       tags:
         - slides
       responses:
         '200':
-          description: returned MapSlideShow object
+          description: returned SlideShow object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MapSlideShow'
+                $ref: '#/components/schemas/SlideShow'
         '404':
-          description: MapSlideShow not found
+          description: SlideShow not found
     patch:
       operationId: updateSlideShow
       tags:
         - slides
       parameters:
-        - name: mapSlideShowId
+        - name: slideShowId
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/MapSlideShowId'
+            $ref: '#/components/schemas/SlideShowId'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MapSlideShow'
+              $ref: '#/components/schemas/SlideShow'
       responses:
         '204':
-          description: updated MapSlideShow object
+          description: updated SlideShow object
         '404':
-          description: MapSlideShow not found
+          description: SlideShow not found
   /slides:
     post:
-      operationId: saveMapSlideShow
+      operationId: saveSlideShow
       tags:
         - slides
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MapSlideShow'
+              $ref: '#/components/schemas/SlideShow'
       responses:
         '201':
-          description: created MapSlideShow object
+          description: created SlideShow object
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  mapSlideShowId:
-                    $ref: '#/components/schemas/MapSlideShowId'
+                  slideShowId:
+                    $ref: '#/components/schemas/SlideShowId'
+  /slides/{slideShowId}/slide/{slideId}:
+    delete:
+      operationId: deleteSlideStep
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+        - name: slideId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - slides
+      responses:
+        '204':
+          description: returned SlideShow object
+        '404':
+          description: SlideShow or MapStep not found
+    post:
+      operationId: duplicateSlideStep
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+        - name: slideId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - slides
+      responses:
+        '204':
+          description: StepSize duplicated
+        '404':
+          description: SlideShow or MapStep not found
+    patch:
+      operationId: updateSlide
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+        - name: slideId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'polygon.yml#/components/schemas/Polygon'
+      tags:
+        - slides
+      responses:
+        '204':
+          description: object updated
+        '404':
+          description: SlideShow or MapStep not found
+  /slides/{slideShowId}/slide:
+    post:
+      operationId: saveSlideStep
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Slide'
+      tags:
+        - slides
+      responses:
+        '201':
+          description: created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slideShowId:
+                    $ref: '#/components/schemas/SlideId'
+        '404':
+          description: SlideShow not found
 
 components:
   schemas:
     SlideId:
       type: string
 
-    MapSlideShowId:
+    SlideShowId:
       type: string
 
-    MapSlideShowEnum:
+    SlideShowEnum:
       enum:
         - map
         - route
       default: 'map'
 
-    MapSlideShow:
+    SlideShow:
       type: object
       required:
         - id
@@ -92,13 +188,13 @@ components:
         - lastModifiedDate
         - lastModifiedUser
         - hash
-        - mapSlides
+        - slides
         - centerPoint
         - mapZoom
       properties:
         id:
           type: string
-        mapSlideShowId:
+        slideShowId:
           type: string
         centerPoint:
           $ref: 'polygon.yml#/components/schemas/Point'
@@ -125,21 +221,17 @@ components:
           type: string
         hash:
           type: string
-        mapSlides:
+        slides:
           type: array
           items:
-            $ref: '#/components/schemas/MapSlide'
-    MapSlide:
+            $ref: '#/components/schemas/Slide'
+    Slide:
       type: object
       required:
         - slideId
         - polygons
       properties:
         slideId:
-          type: string
-        nextSlide:
-          type: string
-        prevSlide:
           type: string
         polygons:
           type: array

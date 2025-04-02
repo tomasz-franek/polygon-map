@@ -2,6 +2,7 @@ package org.polygonMap.backend.controllers;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.NotImplementedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,7 +36,7 @@ public class SlidesControllerTest {
     private static final String requestTemplate = """
             {
                 "id":"%s",
-                "mapSlideShowId": "%s",
+                "slideShowId": "%s",
                 "centerPoint": {
                     "longitude":11,
                     "latitude":21
@@ -51,11 +52,9 @@ public class SlidesControllerTest {
                 "lastModifiedDate":"2025-10-10",
                 "lastModifiedUser": "lastModifiedUser",
                 "hash":"xxx",
-                "mapSlides":[
+                "slides":[
                     {
                         "slideId": "1",
-                        "nextSlide":null,
-                        "prevSlide":null,
                         "polygons":[
                             {
                                 "id":"1",
@@ -86,45 +85,75 @@ public class SlidesControllerTest {
             """;
 
     @Test
-    void saveMapSlideShow_should_returnCreated_when_correctRequestData() throws Exception {
+    void saveSlideShow_should_returnCreated_when_correctRequestData() throws Exception {
         mockMvc.perform(post("/slides").content(String.format(requestTemplate, UUID.randomUUID(), null))
                         .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
-                .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.mapSlideShowId").isString());
+                .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString());
     }
 
     @Test
-    void updateSlideShow_should_updateSlideShowData_when_methodCalledWitCorrectRequest() throws Exception {
-        String id = UUID.randomUUID().toString();
-       
-        MvcResult mvcResult = mockMvc.perform(
-                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
-                .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.mapSlideShowId").isString())
-                .andReturn();
-        String mapSlideShowId = JsonPath.compile("$.mapSlideShowId").read(mvcResult.getResponse().getContentAsString());
-        mockMvc.perform(patch("/slides/{mapSlideShowId}", mapSlideShowId).content(
-                        String.format(requestTemplate, id, mapSlideShowId)).accept(APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
-    }
-
-    @Test
-    void getSlideShow_should_returnSlideShowData_when_methodCalledWitCorrectMapSlideShowId() throws Exception {
+    void updateSlideShow_should_updateSlideShowData_when_methodCalledWithCorrectRequest() throws Exception {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
                         post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
-                .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.mapSlideShowId").isString())
+                .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
-        String mapSlideShowId = JsonPath.compile("$.mapSlideShowId").read(mvcResult.getResponse().getContentAsString());
+        String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
+        mockMvc.perform(
+                        patch("/slides/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, slideShowId))
+                                .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
 
-        mvcResult = mockMvc.perform(get("/slides/{mapSlideShowId}", mapSlideShowId).content(
-                                String.format(requestTemplate, id, mapSlideShowId)).accept(APPLICATION_JSON)
+    @Test
+    void updateSlideShow_should_returnNotFound_when_methodCalledWithIncorrectSlideShowId() throws Exception {
+        mockMvc.perform(patch("/slides/{slideShowId}", "wrongId").content(
+                        String.format(requestTemplate, UUID.randomUUID(), UUID.randomUUID())).accept(APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getSlideShow_should_returnSlideShowData_when_methodCalledWithCorrectSlideShowId() throws Exception {
+        String id = UUID.randomUUID().toString();
+
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
+                .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
+                .andReturn();
+        String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
+
+        mvcResult = mockMvc.perform(get("/slides/{slideShowId}", slideShowId).accept(APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON)).andReturn();
-        String actualMapSlideShow = mvcResult.getResponse().getContentAsString();
-        String expectedMapSlideShow = String.format(requestTemplate, id, mapSlideShowId);
-        log.info(expectedMapSlideShow);
-        JSONAssert.assertEquals(expectedMapSlideShow, actualMapSlideShow, JSONCompareMode.STRICT);
+        String actualSlideShow = mvcResult.getResponse().getContentAsString();
+        String expectedSlideShow = String.format(requestTemplate, id, slideShowId);
+        log.info(expectedSlideShow);
+        JSONAssert.assertEquals(expectedSlideShow, actualSlideShow, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    void getSlideShow_should_returnNotFound_when_methodCalledWithIncorrectSlideShowId() throws Exception {
+        mockMvc.perform(get("/slides/{slideShowId}", "wrongId").accept(APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+                .andExpect(content().string("SlideShow with id = 'wrongId' not found."));
+
+    }
+
+    @Test
+    void duplicateSlideShowStep_should_returnNotFound_when_methodCalledWithWrongMapsSlideShowId() {
+        throw new NotImplementedException();
+    }
+
+    @Test
+    void duplicateSlideShowStep_should_returnNotFound_when_methodCalledWithWrongSlideId() {
+        throw new NotImplementedException();
+    }
+
+    @Test
+    void duplicateSlideShowStep_should_returnNoContent_when_methodCalledWithCorrectPosition() {
+        throw new NotImplementedException();
     }
 }
