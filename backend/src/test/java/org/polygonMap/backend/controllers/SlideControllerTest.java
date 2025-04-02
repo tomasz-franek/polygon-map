@@ -1,7 +1,6 @@
 package org.polygonMap.backend.controllers;
 
 import com.jayway.jsonpath.JsonPath;
-import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
-@Log4j2
 public class SlideControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -132,7 +130,6 @@ public class SlideControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON)).andReturn();
         String actualSlideShow = mvcResult.getResponse().getContentAsString();
         String expectedSlideShow = String.format(requestTemplate, id, slideShowId);
-        log.info(expectedSlideShow);
         JSONAssert.assertEquals(expectedSlideShow, actualSlideShow, JSONCompareMode.STRICT);
     }
 

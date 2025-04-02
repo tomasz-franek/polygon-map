@@ -23,10 +23,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  slideShowId:
-                    $ref: '#/components/schemas/SearchResult'
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
 
 components:
   schemas:
