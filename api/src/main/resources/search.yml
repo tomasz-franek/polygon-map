@@ -1,0 +1,44 @@
+openapi: "3.0.4"
+info:
+  title: PolygonMap App
+  description: Polygon model.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+paths:
+  /search:
+    get:
+      operationId: getSearchResultData
+      parameters:
+        - name: slideName
+          in: query
+          required: true
+          schema:
+            type: string
+      tags:
+        - search
+      responses:
+        '200':
+          description: list of SearchResult
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slideShowId:
+                    $ref: '#/components/schemas/SearchResult'
+
+components:
+  schemas:
+    SearchResult:
+      type: object
+      properties:
+        id:
+          type: string
+        slideShowId:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+
