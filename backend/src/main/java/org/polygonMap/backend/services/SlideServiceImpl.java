@@ -2,7 +2,9 @@ package org.polygonMap.backend.services;
 
 import lombok.AllArgsConstructor;
 import org.polygonMap.backend.exceptions.NotFoundEntityException;
+import org.polygonMap.backend.exceptions.ValidationException;
 import org.polygonMap.backend.repositories.SlideShowRepository;
+import org.polygonMap.backend.validators.ValidationResult;
 import org.polygonMap.model.Polygon;
 import org.polygonMap.model.Slide;
 import org.polygonMap.model.SlideShow;
@@ -14,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class SlidesServiceImpl implements SlidesService {
+public class SlideServiceImpl implements SlideService {
 
     private SlideShowRepository slideShowRepository;
 
@@ -42,10 +44,13 @@ public class SlidesServiceImpl implements SlidesService {
 
 
     @Override
-    public void deleteSlideStep(String slideShowId, String slideId) {
+    public boolean deleteSlideStep(String slideShowId, String slideId) {
         SlideShow slideShowEntity = getSlideShow(slideShowId);
-        slideShowEntity.getSlides().removeIf(slide -> slide.equals(slideId));
-        slideShowRepository.save(slideShowEntity);
+        boolean removed = slideShowEntity.getSlides().removeIf(slide -> slide.getSlideId().equals(slideId));
+        if (removed) {
+            slideShowRepository.save(slideShowEntity);
+        }
+        return removed;
     }
 
     @Override
@@ -66,6 +71,9 @@ public class SlidesServiceImpl implements SlidesService {
 
     @Override
     public boolean updateSlide(String slideShowId, String slideId, List<Polygon> polygons) {
+        if (polygons.isEmpty()) {
+            throw new ValidationException("Polygons list can't be empty", new ValidationResult());
+        }
         SlideShow slideShowEntity = getSlideShow(slideShowId);
         int size = slideShowEntity.getSlides().size();
         for (int i = 0; i < size; i++) {
@@ -86,6 +94,9 @@ public class SlidesServiceImpl implements SlidesService {
 
     @Override
     public String saveSlideStep(String slideShowId, Slide slide) {
+        if (slide == null || slide.getPolygons().isEmpty()) {
+            throw new ValidationException("Slide can't be empty", new ValidationResult());
+        }
         SlideShow slideShowEntity = getSlideShow(slideShowId);
 
         slideShowEntity.getSlides().add(copySlide(slide));

@@ -6,14 +6,14 @@ import org.polygonMap.model.SlideShow;
 
 import java.util.List;
 
-public interface SlidesService {
+public interface SlideService {
     SlideShow getSlideShow(String slideShowId);
 
     String saveSlideShow(SlideShow slideShow);
 
     void updateSlideShow(String slideShowId, SlideShow slideShow);
 
-    void deleteSlideStep(String slideShowId, String slideId);
+    boolean deleteSlideStep(String slideShowId, String slideId);
 
     boolean duplicateSlideStep(String slideShowId, String slideId);
 
