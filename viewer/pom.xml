@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.polygonMap</groupId>
-        <artifactId>polygonMap</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-    </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.polygonMap</groupId>
+    <artifactId>polygonMap</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>viewer</artifactId>
+  <artifactId>viewer</artifactId>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -47,13 +47,13 @@
             <phase>generate-resources</phase>
           </execution>
           <execution>
-            <id>npm api</id>
+            <id>npm generate:full-api</id>
             <goals>
               <goal>npm</goal>
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <arguments>run api</arguments>
+              <arguments>run generate:full-api</arguments>
             </configuration>
           </execution>
           <execution>
