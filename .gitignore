@@ -41,3 +41,4 @@ build/
 ### Auto generated files ###
 /api/src/main/java/
 /api/.openapi-generator
+/viewer/node
