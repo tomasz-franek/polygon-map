@@ -5,7 +5,7 @@ const angular = require("angular-eslint");
 
 module.exports = tseslint.config(
   {
-    ignores: ['.cache/', '.git/', '.github/', 'node_modules/','src/app/api/','.vscode/','.idea/','.angular/','node/'],
+    ignores: ['.cache/', '.git/', '.github/', 'node_modules/', 'src/app/api/**/*.ts', '.vscode/', '.idea/', '.angular/', 'node/'],
     files: ["**/*.ts"],
     extends: [
       eslint.configs.recommended,
