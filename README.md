@@ -4,4 +4,9 @@
 
 - validatory dla każdego obiektu
 - role dla dostępu do poszczególnych części systemu
-- UI
+- progresbar dla mapy z krokami
+- backend optymalizacja punktów
+- bakcend cache dla Slide
+- liquibase do danych testowych
+- test do Accept-Encoding: gzip, deflate
+- front 

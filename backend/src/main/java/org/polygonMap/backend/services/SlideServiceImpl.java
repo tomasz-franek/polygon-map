@@ -8,6 +8,7 @@ import org.polygonMap.backend.validators.ValidationResult;
 import org.polygonMap.model.Polygon;
 import org.polygonMap.model.Slide;
 import org.polygonMap.model.SlideShow;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class SlideServiceImpl implements SlideService {
 
     private SlideShowRepository slideShowRepository;
 
+    @Override
+    @CacheEvict(cacheNames = "slideShows", key = "#slideShowId")
     public SlideShow getSlideShow(String slideShowId) {
         SlideShow slideShowEntity = slideShowRepository.findBySlideShowId(slideShowId);
         if (slideShowEntity == null) {
@@ -29,12 +32,14 @@ public class SlideServiceImpl implements SlideService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "slideShows", key = "#slideShowId", allEntries = true)
     public String saveSlideShow(SlideShow slideShow) {
         slideShow.setSlideShowId(UUID.randomUUID().toString());
         return slideShowRepository.insert(slideShow).getSlideShowId();
     }
 
     @Override
+    @CacheEvict(cacheNames = "slideShows", key = "#slideShowId", allEntries = true)
     public void updateSlideShow(String slideShowId, SlideShow slideShow) {
         SlideShow slideShowEntity = getSlideShow(slideShowId);
         slideShowEntity.setSlides(slideShow.getSlides());
@@ -44,6 +49,7 @@ public class SlideServiceImpl implements SlideService {
 
 
     @Override
+    @CacheEvict(cacheNames = "slideShows", key = "#slideShowId", allEntries = true)
     public boolean deleteSlideStep(String slideShowId, String slideId) {
         SlideShow slideShowEntity = getSlideShow(slideShowId);
         boolean removed = slideShowEntity.getSlides().removeIf(slide -> slide.getSlideId().equals(slideId));
@@ -54,6 +60,7 @@ public class SlideServiceImpl implements SlideService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "slideShows", key = "#slideShowId", allEntries = true)
     public boolean duplicateSlideStep(String slideShowId, String slideId) {
         SlideShow slideShowEntity = getSlideShow(slideShowId);
         int size = slideShowEntity.getSlides().size();
@@ -70,6 +77,7 @@ public class SlideServiceImpl implements SlideService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "slideShows", key = "#slideShowId", allEntries = true)
     public boolean updateSlide(String slideShowId, String slideId, List<Polygon> polygons) {
         if (polygons.isEmpty()) {
             throw new ValidationException("Polygons list can't be empty", new ValidationResult());
@@ -93,6 +101,7 @@ public class SlideServiceImpl implements SlideService {
     }
 
     @Override
+    @CacheEvict(cacheNames = "slideShows", key = "#slideShowId", allEntries = true)
     public String saveSlideStep(String slideShowId, Slide slide) {
         if (slide == null || slide.getPolygons().isEmpty()) {
             throw new ValidationException("Slide can't be empty", new ValidationResult());
