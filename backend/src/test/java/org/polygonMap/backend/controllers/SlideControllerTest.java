@@ -55,28 +55,30 @@ public class SlideControllerTest {
                     {
                         "slideId": "1",
                         "polygons":[
-                            {
-                                "id":"1",
-                                "color": 100,
-                                "polygonId":null,
-                                "points": [
-                                    {
-                                        "longitude":1,
-                                        "latitude":1
-                                    }
-                                ]
-                            },
-                            {
-                                "id":"2",
-                                "color": 200,
-                                "polygonId":null,
-                                "points": [
-                                    {
-                                        "longitude":2,
-                                        "latitude":2
-                                    }
-                                ]
-                            }
+                            [
+                                {
+                                    "id":"1",
+                                    "color": 100,
+                                    "polygonId":null,
+                                    "points": [
+                                        {
+                                            "longitude":1,
+                                            "latitude":1
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id":"2",
+                                    "color": 200,
+                                    "polygonId":null,
+                                    "points": [
+                                        {
+                                            "longitude":2,
+                                            "latitude":2
+                                        }
+                                    ]
+                                }
+                            ]
                         ]
                     }
                 ]
@@ -237,12 +239,12 @@ public class SlideControllerTest {
         mockMvc.perform(get("/slide/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
                         .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(1)))
-                .andExpect(jsonPath("$.slides[0].polygons[0].id").value("a"))
-                .andExpect(jsonPath("$.slides[0].polygons[0].points[0].longitude").value(3))
-                .andExpect(jsonPath("$.slides[0].polygons[0].points[0].latitude").value(31))
-                .andExpect(jsonPath("$.slides[0].polygons[1].id").value("b"))
-                .andExpect(jsonPath("$.slides[0].polygons[1].points[0].longitude").value(4))
-                .andExpect(jsonPath("$.slides[0].polygons[1].points[0].latitude").value(41));
+                .andExpect(jsonPath("$.slides[0].polygons[0][0].id").value("a"))
+                .andExpect(jsonPath("$.slides[0].polygons[0][0].points[0].longitude").value(3))
+                .andExpect(jsonPath("$.slides[0].polygons[0][0].points[0].latitude").value(31))
+                .andExpect(jsonPath("$.slides[0].polygons[0][1].id").value("b"))
+                .andExpect(jsonPath("$.slides[0].polygons[0][1].points[0].longitude").value(4))
+                .andExpect(jsonPath("$.slides[0].polygons[0][1].points[0].latitude").value(41));
     }
 
     @Test
@@ -306,17 +308,19 @@ public class SlideControllerTest {
                         {
                             "slideId":"1",
                             "polygons":[
-                                {
-                                    "id":"1",
-                                    "color": 100,
-                                    "polygonId":null,
-                                    "points": [
-                                        {
-                                            "longitude":1,
-                                            "latitude":1
-                                        }
-                                    ]
-                                }
+                                [
+                                    {
+                                        "id":"1",
+                                        "color": 100,
+                                        "polygonId":null,
+                                        "points": [
+                                            {
+                                                "longitude":1,
+                                                "latitude":1
+                                            }
+                                        ]
+                                    }
+                                ]
                             ]
                         }""").accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -352,17 +356,19 @@ public class SlideControllerTest {
                         {
                             "slideId":"1",
                             "polygons":[
-                                {
-                                    "id":"2",
-                                    "color": 543,
-                                    "polygonId":null,
-                                    "points": [
-                                        {
-                                            "longitude":1,
-                                            "latitude":1
-                                        }
-                                    ]
-                                }
+                                [
+                                    {
+                                        "id":"2",
+                                        "color": 543,
+                                        "polygonId":null,
+                                        "points": [
+                                            {
+                                                "longitude":1,
+                                                "latitude":1
+                                            }
+                                        ]
+                                    }
+                                ]
                             ]
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())

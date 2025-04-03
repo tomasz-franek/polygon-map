@@ -80,7 +80,8 @@ public class SlideServiceImpl implements SlideService {
             if (slideShowEntity.getSlides().get(i).getSlideId().equals(slideId)) {
                 Slide currentStep = slideShowEntity.getSlides().get(i);
                 currentStep.getPolygons().clear();
-                currentStep.setPolygons(polygons);
+                currentStep.setPolygons(new ArrayList<>());
+                currentStep.getPolygons().add(polygons);
                 slideShowRepository.save(slideShowEntity);
                 return true;
             }
