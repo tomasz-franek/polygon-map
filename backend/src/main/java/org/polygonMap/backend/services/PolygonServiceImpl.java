@@ -32,7 +32,7 @@ public class PolygonServiceImpl implements PolygonService {
         if (polygonEntity == null) {
             throw new NotFoundEntityException(Polygon.class, polygonId);
         }
-        polygonEntity.setPoints(polygon.getPoints());
+        polygonEntity.setCoordinates(polygon.getCoordinates());
         polygonEntity.setColor(polygon.getColor());
         polygonRepository.save(polygonEntity);
     }

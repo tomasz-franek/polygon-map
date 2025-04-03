@@ -36,10 +36,7 @@ public class SlideControllerTest {
             {
                 "id":"%s",
                 "slideShowId": "%s",
-                "centerPoint": {
-                    "longitude":11,
-                    "latitude":21
-                },
+                "centerPoint": [11,21],
                 "mapZoom":3,
                 "title":"test",
                 "description":"description test",
@@ -60,23 +57,13 @@ public class SlideControllerTest {
                                     "id":"1",
                                     "color": 100,
                                     "polygonId":null,
-                                    "points": [
-                                        {
-                                            "longitude":1,
-                                            "latitude":1
-                                        }
-                                    ]
+                                    "coordinates": [[1,1]]
                                 },
                                 {
                                     "id":"2",
                                     "color": 200,
                                     "polygonId":null,
-                                    "points": [
-                                        {
-                                            "longitude":2,
-                                            "latitude":2
-                                        }
-                                    ]
+                                    "coordinates": [[2,2]]
                                 }
                             ]
                         ]
@@ -214,23 +201,13 @@ public class SlideControllerTest {
                                 "id":"a",
                                 "color": 100,
                                 "polygonId":null,
-                                "points": [
-                                    {
-                                        "longitude":3,
-                                        "latitude":31
-                                    }
-                                ]
+                                "coordinates": [[3,31]]
                             },
                             {
                                 "id":"b",
                                 "color": 200,
                                 "polygonId":null,
-                                "points": [
-                                    {
-                                        "longitude":4,
-                                        "latitude":41
-                                    }
-                                ]
+                                "coordinates": [[4,41]]
                             }
                         ]
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
@@ -240,11 +217,11 @@ public class SlideControllerTest {
                         .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(1)))
                 .andExpect(jsonPath("$.slides[0].polygons[0][0].id").value("a"))
-                .andExpect(jsonPath("$.slides[0].polygons[0][0].points[0].longitude").value(3))
-                .andExpect(jsonPath("$.slides[0].polygons[0][0].points[0].latitude").value(31))
+                .andExpect(jsonPath("$.slides[0].polygons[0][0].coordinates[0][0]]").value(3))
+                .andExpect(jsonPath("$.slides[0].polygons[0][0].coordinates[0][1]]").value(31))
                 .andExpect(jsonPath("$.slides[0].polygons[0][1].id").value("b"))
-                .andExpect(jsonPath("$.slides[0].polygons[0][1].points[0].longitude").value(4))
-                .andExpect(jsonPath("$.slides[0].polygons[0][1].points[0].latitude").value(41));
+                .andExpect(jsonPath("$.slides[0].polygons[0][1].coordinates[0][0]").value(4))
+                .andExpect(jsonPath("$.slides[0].polygons[0][1].coordinates[0][1]").value(41));
     }
 
     @Test
@@ -255,12 +232,7 @@ public class SlideControllerTest {
                         "id":"a",
                         "color": 100,
                         "polygonId":null,
-                        "points": [
-                            {
-                                "longitude":3,
-                                "latitude":31
-                            }
-                        ]
+                        "coordinates": [[3,31]]
                     }
                 ]
                 """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
@@ -283,12 +255,7 @@ public class SlideControllerTest {
                         "id":"a",
                         "color": 100,
                         "polygonId":null,
-                        "points": [
-                            {
-                                "longitude":3,
-                                "latitude":31
-                            }
-                        ]
+                        "coordinates": [[3,31]]
                     }
                 ]
                 """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
@@ -313,12 +280,7 @@ public class SlideControllerTest {
                                         "id":"1",
                                         "color": 100,
                                         "polygonId":null,
-                                        "points": [
-                                            {
-                                                "longitude":1,
-                                                "latitude":1
-                                            }
-                                        ]
+                                        "coordinates": [[1,1]]
                                     }
                                 ]
                             ]
@@ -361,12 +323,7 @@ public class SlideControllerTest {
                                         "id":"2",
                                         "color": 543,
                                         "polygonId":null,
-                                        "points": [
-                                            {
-                                                "longitude":1,
-                                                "latitude":1
-                                            }
-                                        ]
+                                        "coordinates": [[1,1]]
                                     }
                                 ]
                             ]

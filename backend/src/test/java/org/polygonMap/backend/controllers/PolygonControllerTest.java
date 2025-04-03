@@ -34,16 +34,7 @@ class PolygonControllerTest {
     void savePolygon_should_returnCreated_when_correctRequestData() throws Exception {
         mockMvc.perform(post("/polygon").content("""
                         {
-                            "points" : [
-                                {
-                                    "longitude":1,
-                                    "latitude":1
-                                },
-                                {
-                                    "longitude":2,
-                                    "latitude":2
-                                }
-                            ]
+                            "coordinates" : [[1,1],[2,2]]
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.polygonId").isString());
@@ -53,16 +44,7 @@ class PolygonControllerTest {
     void getPolygon_should_returnPolygonData_when_callWithExistingPolygonId() throws Exception {
         MvcResult result = mockMvc.perform(post("/polygon").content("""
                         {
-                            "points" : [
-                                {
-                                    "longitude":1,
-                                    "latitude":1
-                                },
-                                {
-                                    "longitude":2,
-                                    "latitude":2
-                                }
-                            ]
+                            "coordinates" : [[1,1],[2,2]]
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.polygonId").isString())
@@ -74,24 +56,15 @@ class PolygonControllerTest {
         mockMvc.perform(
                         get("/polygon/{polygonId}", id).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.polygonId", equalTo(id))).andExpect(jsonPath("$.points").isArray())
-                .andExpect(jsonPath("$.points", hasSize(2))).andReturn();
+                .andExpect(jsonPath("$.polygonId", equalTo(id))).andExpect(jsonPath("$.coordinates").isArray())
+                .andExpect(jsonPath("$.coordinates", hasSize(2))).andReturn();
     }
 
     @Test
     void updatePolygon_should_returnNoContent_when_callPolygonUpdated() throws Exception {
         MvcResult result = mockMvc.perform(post("/polygon").content("""
                         {
-                            "points" : [
-                                {
-                                    "longitude":1,
-                                    "latitude":1
-                                },
-                                {
-                                    "longitude":2,
-                                    "latitude":2
-                                }
-                            ],
+                            "coordinates" : [[1,1],[2,2]],
                             "color": 0
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
@@ -103,16 +76,7 @@ class PolygonControllerTest {
 
         mockMvc.perform(patch("/polygon/{polygonId}", polygonId).content("""
                         {
-                            "points" : [
-                                {
-                                    "longitude":3,
-                                    "latitude":4
-                                },
-                                {
-                                    "longitude":5,
-                                    "latitude":6
-                                }
-                            ],
+                            "coordinates" : [[3,4],[5,6]],
                             "color": 1
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
@@ -121,11 +85,10 @@ class PolygonControllerTest {
         mockMvc.perform(
                         get("/polygon/{polygonId}", polygonId).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.polygonId", equalTo(polygonId))).andExpect(jsonPath("$.points").isArray())
-                .andExpect(jsonPath("$.points", hasSize(2))).andExpect(jsonPath("$.points[0].longitude").value(3))
-                .andExpect(jsonPath("$.points[0].latitude").value(4))
-                .andExpect(jsonPath("$.points[1].longitude").value(5))
-                .andExpect(jsonPath("$.points[1].latitude").value(6));
+                .andExpect(jsonPath("$.polygonId", equalTo(polygonId))).andExpect(jsonPath("$.coordinates").isArray())
+                .andExpect(jsonPath("$.coordinates", hasSize(2))).andExpect(jsonPath("$.coordinates[0][0]").value(3))
+                .andExpect(jsonPath("$.coordinates[0][1]").value(4)).andExpect(jsonPath("$.coordinates[1][0]").value(5))
+                .andExpect(jsonPath("$.coordinates[1][1]").value(6));
     }
 
     @Test

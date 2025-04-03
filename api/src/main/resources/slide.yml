@@ -197,7 +197,7 @@ components:
         slideShowId:
           type: string
         centerPoint:
-          $ref: 'polygon.yml#/components/schemas/Point'
+          $ref: 'polygon.yml#/components/schemas/PointCoordinates'
         mapZoom:
           type: number
           format: int32

@@ -72,7 +72,7 @@ components:
     Polygon:
       type: object
       required:
-        - points
+        - coordinates
         - id
       properties:
         id:
@@ -81,19 +81,15 @@ components:
           $ref: '#/components/schemas/PolygonId'
         color:
           type: integer
-        points:
+        coordinates:
           type: array
           items:
-            $ref: '#/components/schemas/Point'
-    Point:
-      type: object
-      required:
-        - longitude
-        - latitude
-      properties:
-        longitude:
-          type: number
-        latitude:
-          type: number
+            $ref: '#/components/schemas/PointCoordinates'
+    PointCoordinates:
+      type: array
+      items:
+        type: integer
+      minItems: 2
+      maxItems: 2
     PolygonId:
       type: string
