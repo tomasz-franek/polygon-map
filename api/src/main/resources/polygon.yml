@@ -88,7 +88,8 @@ components:
     PointCoordinates:
       type: array
       items:
-        type: integer
+        type: number
+        format: double
       minItems: 2
       maxItems: 2
     PolygonId:
