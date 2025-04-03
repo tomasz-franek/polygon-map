@@ -2,11 +2,8 @@
 
 ### Todo
 
-- validatory dla każdego obiektu
+- validatory dla każdego obiektu i użycie przy zapisie
 - role dla dostępu do poszczególnych części systemu
-- progresbar dla mapy z krokami
+- progresbar dla mapy z krokami na UI
 - backend optymalizacja punktów
-- bakcend cache dla Slide
 - liquibase do danych testowych
-- test do Accept-Encoding: gzip, deflate
-- front 
