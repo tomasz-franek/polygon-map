@@ -1,6 +1,5 @@
 package org.polygonMap.backend.controllers;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.polygonMap.api.SlideApi;
 import org.polygonMap.backend.services.SlideService;
@@ -54,7 +53,7 @@ public class SlideController implements SlideApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateSlide(String slideShowId, String slideId, List<@Valid Polygon> polygons) {
+    public ResponseEntity<Void> updateSlide(String slideShowId, String slideId, List<Polygon> polygons) {
         if (slideService.updateSlide(slideShowId, slideId, polygons)) {
             return ResponseEntity.noContent().build();
         } else {

@@ -236,8 +236,4 @@ components:
         polygons:
           type: array
           items:
-            $ref: '#/components/schemas/PolygonArray'
-    PolygonArray:
-      type: array
-      items:
-        $ref: 'polygon.yml#/components/schemas/Polygon'
+            $ref: 'polygon.yml#/components/schemas/Polygon'
