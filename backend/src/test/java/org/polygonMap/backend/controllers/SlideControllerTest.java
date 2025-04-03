@@ -9,6 +9,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -368,5 +369,24 @@ public class SlideControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(0)));
 
+    }
+
+    @Test
+    void getSlideShow_should_returnCompressedResponse_when_methodCalledWithAcceptEncodingGzip() throws Exception {
+        String id = UUID.randomUUID().toString();
+
+        MvcResult mvcResult = mockMvc.perform(
+                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
+                .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
+                .andReturn();
+        String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
+
+        mvcResult = mockMvc.perform(get("/slide/{slideShowId}", slideShowId).accept(APPLICATION_JSON)
+                        .header(HttpHeaders.ACCEPT_ENCODING, "gzip").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andExpect(content().contentType(APPLICATION_JSON)).andReturn();
+        String actualSlideShow = mvcResult.getResponse().getContentAsString();
+        String expectedSlideShow = String.format(requestTemplate, id, slideShowId);
+        JSONAssert.assertEquals(expectedSlideShow, actualSlideShow, JSONCompareMode.STRICT);
     }
 }
