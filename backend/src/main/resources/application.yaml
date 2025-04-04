@@ -6,7 +6,8 @@ spring:
     mongodb:
       user: user
       password: password
-      uri: mongodb://127.0.0.1:27017/testPolygonMap
+      uri: mongodb://127.0.0.1:27017/testPolygonMap?timeoutMS=1000&connectTimeoutMS=1000&serverSelectionTimeoutMS=1000
+      autoCommit: true
 server:
   compression:
     enabled: true
