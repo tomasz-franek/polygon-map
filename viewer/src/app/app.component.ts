@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {LeafletControlLayersConfig, LeafletModule} from '@bluehalo/ngx-leaflet';
-import {LatLng, latLng, polygon, tileLayer} from 'leaflet';
+import {LatLng, latLng, Polygon, polygon, tileLayer} from 'leaflet';
 import * as jsonData from '../assets/europe.json';
 import {v4 as uuid} from 'uuid';
 import {Slide} from './api/slide';
+import {ColorUtil} from './utils/color.util';
 
 @Component({
   selector: 'app-root',
@@ -31,9 +32,8 @@ export class AppComponent implements OnInit {
             points.push(new LatLng(item[0], item[1]));
           }
         })
-        this.layersControl.overlays[polygonObject.polygonId || ''] = polygon(points);
+        this.layersControl.overlays[polygonObject.polygonId || ''] = this.createPolygon(points, polygonObject.polygonId || '');
       } else {
-
         const polyLinePoints: any = [];
         polygonObject.coordinates.forEach((coordinate: any[]) => {
           const points: LatLng[] = [];
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
           })
           polyLinePoints.push(points);
         })
-        this.layersControl.overlays[polygonObject.polygonId || ''] = polygon(polyLinePoints);
+        this.layersControl.overlays[polygonObject.polygonId || ''] = this.createPolygon(polyLinePoints, polygonObject.polygonId || '');
       }
     })
   }
@@ -51,6 +51,7 @@ export class AppComponent implements OnInit {
     layers: [
       tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 15, attribution: 'OpenStreetMap' })
     ],
+    hideSingleBase: true,
     zoom: 5,
     center: latLng(51.801919, 19.415062)
   };
@@ -92,5 +93,13 @@ export class AppComponent implements OnInit {
       }
     })
     return slide;
+  }
+
+  private createPolygon(points: LatLng[], popupText: string): Polygon {
+    return polygon(points, {
+      color: ColorUtil.randomColor(),
+      weight: 1,
+      interactive: false,
+    });
   }
 }
