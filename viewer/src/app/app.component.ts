@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LeafletModule} from '@bluehalo/ngx-leaflet';
 import * as L from 'leaflet';
 import {LatLng, latLng, Polygon, polygon, tileLayer} from 'leaflet';
-import * as jsonData from '../assets/world_800.json';
+import jsonData from '../assets/world_800.json';
 import {v4 as uuid} from 'uuid';
 import {Slide} from './api/slide';
 import {interval, Subscription} from 'rxjs';
