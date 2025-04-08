@@ -1,15 +1,26 @@
 spring:
   application:
     name: polygonMap
-
   data:
     mongodb:
       user: user
       password: password
-      uri: mongodb://127.0.0.1:27017/testPolygonMap?timeoutMS=1000&connectTimeoutMS=1000&serverSelectionTimeoutMS=1000
+      uri: mongodb://127.0.0.1:27017/test_db?timeoutMS=1000&connectTimeoutMS=1000&serverSelectionTimeoutMS=1000
       autoCommit: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
 server:
   compression:
     enabled: true
     mime-types: application/json
     min-response-size: 100
+#logging:
+#  level:
+#    root: DEBUG
+#    org:
+#      hibernate: DEBUG
+#      polygonMap:
+#        backend: DEBUG
+#      springframework:
+#        web: DEBUG

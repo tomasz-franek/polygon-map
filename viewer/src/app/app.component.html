@@ -1,7 +1,8 @@
 <div class="leaflet-container">
+  <div>
+    <button class="leaflet-popup-close-button" (click)="addNextPolygon()"></button>
+  </div>
   <div class="map" style="height: 98%; width: 98%; position: absolute"
-       leaflet
-       [leafletOptions]="options"
-       [leafletLayersControl]="layersControl">
+       id="map">
   </div>
 </div>

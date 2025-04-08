@@ -12,7 +12,7 @@ spring:
     mongodb:
       user: user
       password: password
-      uri: mongodb://127.0.0.1:27017/testPolygonMap
+      uri: mongodb://127.0.0.1:27017/test_db
       driver-class-name: liquibase.ext.mongodb.database.MongoClientDriver
       autoCommit: true
   jpa:
@@ -20,10 +20,18 @@ spring:
       ddl-auto: none
   liquibase:
     enabled: true
-    driver-class-name: liquibase.ext.mongodb.database.MongoClientDriver
     change-log: classpath:db/changelog/db.changelog-test.yaml
 server:
   compression:
     enabled: true
     mime-types: application/json
     min-response-size: 200
+#logging:
+#  level:
+#    root: DEBUG
+#    org:
+#      hibernate: DEBUG
+#      polygonMap:
+#        backend: DEBUG
+#      springframework:
+#        web: DEBUG

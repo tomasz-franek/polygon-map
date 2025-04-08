@@ -1,9 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {LeafletControlLayersConfig, LeafletModule} from '@bluehalo/ngx-leaflet';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {LeafletModule} from '@bluehalo/ngx-leaflet';
+import * as L from 'leaflet';
 import {LatLng, latLng, Polygon, polygon, tileLayer} from 'leaflet';
-import * as jsonData from '../assets/europe.json';
+import * as jsonData from '../assets/world_800.json';
 import {v4 as uuid} from 'uuid';
 import {Slide} from './api/slide';
+import {interval, Subscription} from 'rxjs';
 import {ColorUtil} from './utils/color.util';
 
 @Component({
@@ -14,15 +16,34 @@ import {ColorUtil} from './utils/color.util';
     LeafletModule
   ]
 })
-export class AppComponent implements OnInit {
-  public layersControl: LeafletControlLayersConfig = {
-    baseLayers: {
-      'Open Street Map': tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, minZoom:5, attribution: 'OpenStreetMap' })
-    },
-    overlays: {}
-  }
+export class AppComponent implements OnInit, OnDestroy {
+
+  private subscription: Subscription | undefined;
+
+  private map: L.Map | undefined;
+  private countryOrder: string[] = [];
+  // ['Portugal', 'Spain', 'Andorra', 'France', 'Monaco', 'Belgium', 'Netherlands', 'United Kingdom',
+  // 'Ireland', 'Faroe Islands', 'Iceland',
+  // 'Switzerland', 'Liechtenstein', 'Italy', 'Holy See (Vatican City)', 'San Marino', 'Malta', 'Austria', 'Slovenia', 'Croatia', 'Bosnia and Herzegovina',
+  // 'Luxembourg', 'Germany', 'Denmark', 'Czech Republic', 'Poland', 'Slovakia', 'Belarus', 'Lithuania',
+  // 'Latvia', 'Estonia', 'Finland', 'Sweden', 'Norway', 'Hungary', 'Ukraine', 'Republic of Moldova', 'Montenegro', 'Romania', 'Serbia', 'Bulgaria', 'The former Yugoslav Republic of Macedonia',
+  // 'Albania', 'Greece', 'Cyprus', 'Turkey', 'Georgia', 'Armenia', 'Azerbaijan', 'Russia'];
+  protected countryMap: Map<string, Polygon> = new Map<string, Polygon>();
+  private polygonCount: number = 0;
+  title = 'viewer';
+  options = {
+    layers: [],
+    hideSingleBase: true,
+    zoom: 4,
+    center: latLng(51.801919, 19.415062)
+  };
 
   ngOnInit(): void {
+    this.map = L.map('map', this.options);
+    this.map.addLayer(tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 15,
+      attribution: 'OpenStreetMap'
+    }))
     const slide: Slide = this.parseJsonData();
     slide.polygons.forEach(polygonObject => {
       const points: LatLng[] = [];
@@ -32,7 +53,8 @@ export class AppComponent implements OnInit {
             points.push(new LatLng(item[0], item[1]));
           }
         })
-        this.layersControl.overlays[polygonObject.polygonId || ''] = this.createPolygon(points, polygonObject.polygonId || '');
+        let createdPolygon = this.createPolygon(points);
+        this.countryMap.set(polygonObject.polygonId || '', createdPolygon);
       } else {
         const polyLinePoints: any = [];
         polygonObject.coordinates.forEach((coordinate: any[]) => {
@@ -42,19 +64,21 @@ export class AppComponent implements OnInit {
           })
           polyLinePoints.push(points);
         })
-        this.layersControl.overlays[polygonObject.polygonId || ''] = this.createPolygon(polyLinePoints, polygonObject.polygonId || '');
+        let createdPolygon = this.createPolygon(polyLinePoints);
+        this.countryMap.set(polygonObject.polygonId || '', createdPolygon);
       }
     })
+    this.subscription = interval(100).subscribe(() => {
+      this.addNextPolygon();
+    });
   }
-  title = 'viewer';
-  options = {
-    layers: [
-      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 15, attribution: 'OpenStreetMap' })
-    ],
-    hideSingleBase: true,
-    zoom: 5,
-    center: latLng(51.801919, 19.415062)
-  };
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 
   parseJsonData(): Slide {
     let slide: Slide = {
@@ -95,11 +119,57 @@ export class AppComponent implements OnInit {
     return slide;
   }
 
-  private createPolygon(points: LatLng[], popupText: string): Polygon {
+  private createPolygon(points: LatLng[]): Polygon {
     return polygon(points, {
       color: ColorUtil.randomColor(),
       weight: 1,
       interactive: false,
     });
+  }
+
+  addNextPolygon() {
+    if (this.countryOrder.length > 0) {
+      if (this.polygonCount < this.countryOrder.length) {
+        let polygon = this.countryMap.get(this.countryOrder[this.polygonCount]) || undefined;
+        this.polygonCount += 1;
+        if (polygon != undefined && this.map != undefined) {
+          polygon.addTo(this.map);
+        }
+      } else {
+        if (this.subscription) {
+          this.subscription.unsubscribe();
+        }
+        // this.polygonCount = 0;
+        // this.countryMap.forEach((key, _) => {
+        //   if (this.map != undefined) {
+        //     key.removeFrom(this.map);
+        //   }
+        // });
+      }
+    } else {
+      if (this.polygonCount < this.countryMap.size) {
+        let key = Array.from(this.countryMap.keys())[this.polygonCount];
+        console.log(key);
+        let polygon = this.countryMap.get(key) || undefined;
+        this.polygonCount += 1;
+        if (polygon != undefined && this.map != undefined) {
+          polygon.addTo(this.map);
+          var tooltip = L.tooltip()
+            .setLatLng(polygon.getCenter())
+            .setContent(key)
+            .addTo(this.map);
+        }
+      } else {
+        if (this.subscription) {
+          this.subscription.unsubscribe();
+        }
+        // this.polygonCount = 0;
+        // this.countryMap.forEach((key, _) => {
+        //   if (this.map != undefined) {
+        //     key.removeFrom(this.map);
+        //   }
+        // });
+      }
+    }
   }
 }
