@@ -7,9 +7,6 @@ spring:
       password: password
       uri: mongodb://127.0.0.1:27017/test_db?timeoutMS=1000&connectTimeoutMS=1000&serverSelectionTimeoutMS=1000
       autoCommit: true
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
 server:
   compression:
     enabled: true
