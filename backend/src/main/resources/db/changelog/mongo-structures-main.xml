@@ -1,0 +1,125 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:mongodb="http://www.liquibase.org/xml/ns/mongodb"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+    http://www.liquibase.org/xml/ns/mongodb
+    http://www.liquibase.org/xml/ns/mongodb/liquibase-mongodb-latest.xsd">
+
+    <changeSet id="collection-slideShow" author="tfranek" runAlways="true">
+        <mongodb:createCollection collectionName="slideShow" >
+            <mongodb:options><![CDATA[
+                {
+                    validator: {
+                        $jsonSchema: {
+                            bsonType: "object",
+                            required: [
+                                "id",
+                                "slideShowId",
+                                "version",
+                                "createdDate",
+                                "createdUser",
+                                "centerPoint",
+                                "slides"
+                            ],
+                            properties: {
+                                id: {
+                                    bsonType: "string",
+                                },
+                                slideShowId: {
+                                    bsonType: "string",
+                                },
+                                centerPoint: {
+                                    "bsonType": "array",
+                                    "items": {
+                                        "bsonType": "double"
+                                    }
+                                },
+                                mapZoom: {
+                                    bsonType: "int",
+                                },
+                                title: {
+                                    bsonType: "string",
+                                },
+                                description: {
+                                    bsonType: "string",
+                                },
+                                version: {
+                                    bsonType: "string",
+                                },
+                                nextVersion: {
+                                    bsonType: "string",
+                                },
+                                prevVersion: {
+                                    bsonType: "string",
+                                },
+                                createdDate: {
+                                    bsonType: "string",
+                                },
+                                createdUser: {
+                                    bsonType: "string",
+                                },
+                                lastModifiedDate: {
+                                    bsonType: "string",
+                                },
+                                lastModifiedUser: {
+                                    bsonType: "string",
+                                },
+                                hash: {
+                                    bsonType: "string",
+                                },
+                                slides:{
+                                    bsonType: "array",
+                                    items:{
+                                         required: ["slideId", "polygons"],
+                                         properties: {
+                                            slideId: {
+                                                bsonType: "string",
+                                            },
+                                            polygons: {
+                                                bsonType: "array",
+                                                items: {
+                                                    required: [
+                                                        "id",
+                                                        "polygonId",
+                                                        "coordinates"
+                                                    ],
+                                                    properties: {
+                                                        id: {
+                                                            bsonType: "string",
+                                                        },
+                                                        polygonId: {
+                                                            bsonType: "string",
+                                                        },
+                                                        color: {
+                                                            bsonType: "int",
+                                                        }
+                                                        coordinates: {
+                                                            "bsonType": "array",
+                                                            "items": {
+                                                                "bsonType": "array",
+                                                                "items": {
+                                                                    "bsonType": "double"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                         }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    validationAction: "error",
+                    validationLevel: "strict"
+                }
+            ]]></mongodb:options>
+        </mongodb:createCollection>
+    </changeSet>
+    <changeSet id="collection-polygon" author="tfranek">
+        <mongodb:createCollection collectionName="polygon"/>
+    </changeSet>
+</databaseChangeLog>
