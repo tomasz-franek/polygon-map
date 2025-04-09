@@ -1,26 +1,12 @@
 spring:
   application:
     name: polygonMap
-  datasource:
-    hikari:
-      minimumIdle: 2
-      maximumPoolSize: 50
-      idleTimeout: 120000
-      connectionTimeout: 300000
-      leakDetectionThreshold: 1800000
   data:
     mongodb:
       user: user
       password: password
-      uri: mongodb://127.0.0.1:27017/test_db
-      driver-class-name: liquibase.ext.mongodb.database.MongoClientDriver
+      uri: mongodb://127.0.0.1:27017/test?timeoutMS=1000&connectTimeoutMS=1000&serverSelectionTimeoutMS=1000
       autoCommit: true
-  jpa:
-    hibernate:
-      ddl-auto: none
-  liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-test.yaml
 server:
   compression:
     enabled: true
