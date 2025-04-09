@@ -6,9 +6,14 @@
         http://www.liquibase.org/xml/ns/mongodb http://www.liquibase.org/xml/ns/mongodb/liquibase-mongodb-latest.xsd">
 
     <changeSet id="clear-collections-1" author="tfranek">
-        <mongodb:dropCollection collectionName="slideShow"/>
-    </changeSet>
-    <changeSet id="clear-collections-2" author="tfranek">
-        <mongodb:dropCollection collectionName="polygon"/>
+        <mongodb:insertOne collectionName="slideShow">
+            <mongodb:document>
+                {
+                    "id":"test",
+                    "slideShowId": "test-id",
+                    "version": "aaa"
+                }
+            </mongodb:document>
+        </mongodb:insertOne>
     </changeSet>
 </databaseChangeLog>

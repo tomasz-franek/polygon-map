@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
-public class SlideControllerTest {
+public class SlideControllerTest extends BaseMongoTest {
     @Autowired
     private MockMvc mockMvc;
 

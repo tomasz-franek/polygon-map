@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
-class PolygonControllerTest {
+class PolygonControllerTest extends BaseMongoTest {
     @Autowired
     private MockMvc mockMvc;
 

@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
+      file: db/changelog/mongo-structures-main.xml
+  - include:
       file: db/changelog/mongo-data-test.xml
