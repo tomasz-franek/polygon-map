@@ -34,6 +34,8 @@ class PolygonControllerTest extends BaseMongoTest {
     void savePolygon_should_returnCreated_when_correctRequestData() throws Exception {
         mockMvc.perform(post("/polygon").content("""
                         {
+                            "id":"1",
+                            "polygonId":"aa",
                             "coordinates" : [[1,1],[2,2]]
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())

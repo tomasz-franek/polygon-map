@@ -56,13 +56,13 @@ public class SlideControllerTest extends BaseMongoTest {
                             {
                                 "id":"1",
                                 "color": 100,
-                                "polygonId":null,
+                                "polygonId":"aaa",
                                 "coordinates": [[1,1]]
                             },
                             {
                                 "id":"2",
                                 "color": 200,
-                                "polygonId":null,
+                                "polygonId":"bbb",
                                 "coordinates": [[2,2]]
                             }
                         ]

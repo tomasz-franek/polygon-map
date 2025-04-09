@@ -15,7 +15,6 @@
                         $jsonSchema: {
                             bsonType: "object",
                             required: [
-                                "id",
                                 "slideShowId",
                                 "version",
                                 "createdDate",
@@ -80,11 +79,6 @@
                                             polygons: {
                                                 bsonType: "array",
                                                 items: {
-                                                    required: [
-                                                        "id",
-                                                        "polygonId",
-                                                        "coordinates"
-                                                    ],
                                                     properties: {
                                                         id: {
                                                             bsonType: "string",
@@ -120,6 +114,43 @@
         </mongodb:createCollection>
     </changeSet>
     <changeSet id="collection-polygon" author="tfranek">
-        <mongodb:createCollection collectionName="polygon"/>
+        <mongodb:createCollection collectionName="polygon">
+            <mongodb:options><![CDATA[
+                {
+                    validator: {
+                        $jsonSchema: {
+                            bsonType: "object",
+                            required: [
+                                "polygonId",
+                                "coordinates"
+                            ],
+                            properties: {
+                                id: {
+                                    bsonType: "string",
+                                },
+                                polygonId: {
+                                    bsonType: "string",
+                                },
+                                color: {
+                                    bsonType: "int",
+                                },
+                                coordinates: {
+                                    "bsonType": "array",
+                                    "items": {
+                                        "bsonType": "array",
+                                            "items": {
+                                            "bsonType": "double"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    validationAction: "error",
+                    validationLevel: "strict"
+                }
+            ]]>
+            </mongodb:options>
+        </mongodb:createCollection>
     </changeSet>
 </databaseChangeLog>
