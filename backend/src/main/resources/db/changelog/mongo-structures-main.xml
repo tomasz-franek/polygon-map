@@ -92,9 +92,12 @@
                                                         coordinates: {
                                                             "bsonType": "array",
                                                             "items": {
-                                                                "bsonType": "array",
+                                                                "bsonType": "array"
                                                                 "items": {
-                                                                    "bsonType": "double"
+                                                                    "bsonType": ["array","double","int"]
+                                                                    "items": {
+                                                                        "bsonType": ["double","int"]
+                                                                    }
                                                                 }
                                                             }
                                                         }
