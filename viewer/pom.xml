@@ -53,7 +53,7 @@
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <arguments>run generate:full-api</arguments>
+              <arguments>run api</arguments>
             </configuration>
           </execution>
           <execution>

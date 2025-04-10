@@ -7,10 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false --browsers=ChromeHeadless",
-    "generate:full-api": "node build-scripts/api-generate.ts",
-    "generate:polygon-api": "openapi-generator-cli generate -i ../api/src/main/resources/polygon.yml -g typescript-angular -o src/app/api/polygon",
-    "generate:search-api": "openapi-generator-cli generate -i ../api/src/main/resources/search.yml -g typescript-angular -o src/app/api/search",
-    "generate:slide-api": "openapi-generator-cli generate -i ../api/src/main/resources/slide.yml -g typescript-angular -o src/app/api/slide",
+    "api": "openapi-generator-cli generate -i ../api/src/main/resources/search.yml -g typescript-angular -o src/app/api",
     "lint": "ng lint"
   },
   "private": true,

@@ -1,4 +1,4 @@
-openapi: "3.0.4"
+openapi: "3.0.0"
 info:
   title: PolygonMap App
   description: Polygon model.
@@ -27,6 +27,224 @@ paths:
                 items:
                   $ref: '#/components/schemas/SearchResult'
 
+  /slide/{slideShowId}:
+    get:
+      operationId: getSlideShow
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+      tags:
+        - slide
+      responses:
+        '200':
+          description: returned SlideShow object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SlideShow'
+        '404':
+          description: SlideShow not found
+    patch:
+      operationId: updateSlideShow
+      tags:
+        - slide
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SlideShow'
+      responses:
+        '204':
+          description: updated SlideShow object
+        '404':
+          description: SlideShow not found
+  /slide:
+    post:
+      operationId: saveSlideShow
+      tags:
+        - slide
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SlideShow'
+      responses:
+        '201':
+          description: created SlideShow object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slideShowId:
+                    $ref: '#/components/schemas/SlideShowId'
+  /slide/{slideShowId}/slide/{slideId}:
+    delete:
+      operationId: deleteSlideStep
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+        - name: slideId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - slide
+      responses:
+        '204':
+          description: Slide object deleted
+        '404':
+          description: SlideShow or MapStep not found
+    post:
+      operationId: duplicateSlideStep
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+        - name: slideId
+          in: path
+          required: true
+          schema:
+            type: string
+      tags:
+        - slide
+      responses:
+        '204':
+          description: StepSize duplicated
+        '404':
+          description: SlideShow or MapStep not found
+    patch:
+      operationId: updateSlide
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+        - name: slideId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Polygon'
+      tags:
+        - slide
+      responses:
+        '204':
+          description: object updated
+        '404':
+          description: SlideShow or MapStep not found
+  /slide/{slideShowId}/slide:
+    post:
+      operationId: saveSlideStep
+      parameters:
+        - name: slideShowId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SlideShowId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Slide'
+      tags:
+        - slide
+      responses:
+        '201':
+          description: created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slideShowId:
+                    $ref: '#/components/schemas/SlideId'
+        '404':
+          description: SlideShow not found
+  /polygon/{polygonId}:
+    get:
+      operationId: getPolygon
+      parameters:
+        - name: polygonId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PolygonId'
+      tags:
+        - polygon
+      responses:
+        '200':
+          description: returned Polygon object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Polygon'
+        '404':
+          description: Polygon not found
+    patch:
+      operationId: updatePolygon
+      parameters:
+        - name: polygonId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PolygonId'
+      tags:
+        - polygon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Polygon'
+      responses:
+        '204':
+          description: Polygon updated
+        '404':
+          description: Polygon not found
+  /polygon:
+    post:
+      operationId: savePolygon
+      tags:
+        - polygon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Polygon'
+      responses:
+        '201':
+          description: created Polygon
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  polygonId:
+                    $ref: '#/components/schemas/PolygonId'
+
+
 components:
   schemas:
     SearchResult:
@@ -40,4 +258,102 @@ components:
           type: string
         description:
           type: string
+    SlideId:
+      type: string
 
+    SlideShowId:
+      type: string
+
+    SlideShowEnum:
+      enum:
+        - map
+        - route
+      default: 'map'
+
+    SlideShow:
+      type: object
+      required:
+        - id
+        - title
+        - version
+        - createdDate
+        - createdUser
+        - lastModifiedDate
+        - lastModifiedUser
+        - hash
+        - slide
+        - centerPoint
+        - mapZoom
+      properties:
+        id:
+          type: string
+        slideShowId:
+          type: string
+        centerPoint:
+          $ref: '#/components/schemas/PointCoordinates'
+        mapZoom:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        nextVersion:
+          type: string
+        prevVersion:
+          type: string
+        createdDate:
+          type: string
+        createdUser:
+          type: string
+        lastModifiedDate:
+          type: string
+        lastModifiedUser:
+          type: string
+        hash:
+          type: string
+        slides:
+          type: array
+          items:
+            $ref: '#/components/schemas/Slide'
+    Slide:
+      type: object
+      required:
+        - slideId
+        - polygons
+      properties:
+        slideId:
+          type: string
+        polygons:
+          type: array
+          items:
+            $ref: '#/components/schemas/Polygon'
+
+    Polygon:
+      type: object
+      required:
+        - coordinates
+        - id
+      properties:
+        id:
+          type: string
+        polygonId:
+          $ref: '#/components/schemas/PolygonId'
+        color:
+          type: integer
+        coordinates:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/PointCoordinates'
+    PointCoordinates:
+      type: array
+      items:
+        type: number
+        format: double
+      minItems: 2
+      maxItems: 2
+    PolygonId:
+      type: string
