@@ -1,11 +1,12 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {LeafletModule} from '@bluehalo/ngx-leaflet';
 import * as L from 'leaflet';
-import {LatLng, latLng, Polygon, polygon, tileLayer} from 'leaflet';
+import {LatLng, latLng, Polygon, polygon} from 'leaflet';
 import {interval, Subscription} from 'rxjs';
 import {ColorUtil} from './utils/color.util';
 import {ApiService} from './services/api.service';
 import {SlideShow} from './api';
+import {MapUtil} from './utils/map.util';
 
 @Component({
   selector: 'app-root',
@@ -31,20 +32,10 @@ export class AppComponent implements OnInit, OnDestroy {
   protected countryMap: Map<string, Polygon> = new Map<string, Polygon>();
   private polygonCount: number = -1;
   title = 'viewer';
-  options = {
-    layers: [],
-    hideSingleBase: true,
-    zoom: 4,
-    center: latLng(52, 20)
-  };
 
   ngOnInit(): void {
-    this.map = L.map('map', this.options);
-    this.map.addLayer(tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 15,
-      attribution: 'OpenStreetMap'
-    }))
-    this.parseJsonData();
+    this.map = MapUtil.createMap(MapUtil.defaultMapOptions());
+    this.readSlideShow("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1");
 
     this.subscription = interval(100).subscribe(() => {
       this.addNextPolygon();
@@ -58,17 +49,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 
-  parseJsonData() {
-    this.apiService.getSlideShow("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1").subscribe((slideSow: SlideShow) => {
-      if (slideSow.slides !== undefined && slideSow.slides.length > 0) {
-        slideSow.slides[0].polygons.forEach(polygonObject => {
+  readSlideShow(slideShowId: string): void {
+    this.apiService.getSlideShow(slideShowId).subscribe((slideShow: SlideShow) => {
+      if (slideShow.slides !== undefined && slideShow.slides.length > 0) {
+        this.map?.setView(latLng(slideShow.centerPoint[0], slideShow.centerPoint[1]), slideShow.mapZoom);
+        slideShow.slides[0].polygons.forEach(polygonObject => {
           const points: LatLng[] = [];
           let createdPolygon = undefined;
           if (polygonObject.coordinates.length == 1) {
             polygonObject.coordinates[0].forEach((item: number[]) => {
-              if (typeof item[0] == 'number' && typeof item[1] == 'number') {
-                points.push(new LatLng(item[0], item[1]));
-              }
+              this.addPoint(points, item);
             })
             createdPolygon = this.createPolygon(points);
           } else {
@@ -76,9 +66,8 @@ export class AppComponent implements OnInit, OnDestroy {
             polygonObject.coordinates.forEach((coordinate: number[][]) => {
               const points: LatLng[] = [];
               coordinate.forEach((item: any[]) => {
-                points.push(new LatLng(item[0], item[1]));
+                this.addPoint(points, item);
               })
-
               polyLinePoints.push(points);
             });
             createdPolygon = this.createPolygon(polyLinePoints);
@@ -89,6 +78,12 @@ export class AppComponent implements OnInit, OnDestroy {
         })
       }
     })
+  }
+
+  private addPoint(points: any[], item: any[]) {
+    if (typeof item[0] == 'number' && typeof item[1] == 'number') {
+      points.push(new LatLng(item[0], item[1]));
+    }
   }
 
   private createPolygon(points: LatLng[]): Polygon {
@@ -102,28 +97,15 @@ export class AppComponent implements OnInit, OnDestroy {
   addNextPolygon() {
     if (this.countryOrder.length > 0) {
       if (this.polygonCount < this.countryOrder.length) {
+        let key = this.countryOrder[this.polygonCount];
         let polygon = this.countryMap.get(this.countryOrder[this.polygonCount]) || undefined;
         this.polygonCount += 1;
         if (polygon != undefined && this.map != undefined) {
           polygon.addTo(this.map);
-          let key = this.countryOrder[this.polygonCount - 1];
-          let centerPoints = polygon.getBounds().getCenter();
-          var tooltip = L.tooltip()
-            .setLatLng(centerPoints)
-            .setContent(key);
-          tooltip.options.direction = "top";
-          tooltip.addTo(this.map);
+          this.createTooltip(polygon, this.map, key);
         }
       } else {
-        // if (this.subscription) {
-        //   this.subscription.unsubscribe();
-        // }
-        this.polygonCount = -1;
-        this.countryMap.forEach((key, _) => {
-          if (this.map != undefined) {
-            key.removeFrom(this.map);
-          }
-        });
+        this.endSubscription();
       }
     } else {
       if (this.polygonCount < this.countryMap.size) {
@@ -132,19 +114,24 @@ export class AppComponent implements OnInit, OnDestroy {
         this.polygonCount += 1;
         if (polygon != undefined && this.map != undefined) {
           polygon.addTo(this.map);
-          L.tooltip().setLatLng(polygon.getCenter()).setContent(key).addTo(this.map);
+          this.createTooltip(polygon, this.map, key);
         }
       } else {
-        // if (this.subscription) {
-        //   this.subscription.unsubscribe();
-        // }
-        this.polygonCount = -1;
-        this.countryMap.forEach((key, _) => {
-          if (this.map != undefined) {
-            key.removeFrom(this.map);
-          }
-        });
+        this.endSubscription();
       }
+    }
+  }
+
+  private createTooltip(polygon: Polygon, map: L.Map, key: string) {
+    let centerPoints = polygon.getBounds().getCenter();
+    var tooltip = L.tooltip().setLatLng(centerPoints).setContent(key);
+    tooltip.options.direction = "top";
+    tooltip.addTo(map);
+  }
+
+  private endSubscription(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }
