@@ -140,9 +140,12 @@
                                 coordinates: {
                                     "bsonType": "array",
                                     "items": {
-                                        "bsonType": "array",
+                                        "bsonType": "array"
+                                        "items": {
+                                            "bsonType": ["array","double","int"]
                                             "items": {
-                                            "bsonType": "double"
+                                                "bsonType": ["double","int"]
+                                            }
                                         }
                                     }
                                 }
