@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.map?.setView(latLng(slideShow.centerPoint[0], slideShow.centerPoint[1]), slideShow.mapZoom);
         slideShow.slides[0].polygons.forEach(polygonObject => {
           const points: LatLng[] = [];
-          let createdPolygon = undefined;
+          let createdPolygon: Polygon | undefined;
           if (polygonObject.coordinates.length == 1) {
             polygonObject.coordinates[0].forEach((item: number[]) => {
               this.addPoint(points, item);
@@ -124,7 +124,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private createTooltip(polygon: Polygon, map: L.Map, key: string) {
     let centerPoints = polygon.getBounds().getCenter();
-    var tooltip = L.tooltip().setLatLng(centerPoints).setContent(key);
+    const tooltip = L.tooltip().setLatLng(centerPoints).setContent(key);
     tooltip.options.direction = "top";
     tooltip.addTo(map);
   }
