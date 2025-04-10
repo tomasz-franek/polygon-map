@@ -57,13 +57,13 @@ public class SlideControllerTest extends BaseMongoTest {
                                 "id":"1",
                                 "color": 100,
                                 "polygonId":"aaa",
-                                "coordinates": [[1,1]]
+                                "coordinates": [[[1,1]]]
                             },
                             {
                                 "id":"2",
                                 "color": 200,
                                 "polygonId":"bbb",
-                                "coordinates": [[2,2]]
+                                "coordinates": [[[2,2]]]
                             }
                         ]
                     }
@@ -200,13 +200,13 @@ public class SlideControllerTest extends BaseMongoTest {
                                 "id":"a",
                                 "color": 100,
                                 "polygonId":null,
-                                "coordinates": [[3,31]]
+                                "coordinates": [[[3,31]]]
                             },
                             {
                                 "id":"b",
                                 "color": 200,
                                 "polygonId":null,
-                                "coordinates": [[4,41]]
+                                "coordinates": [[[4,41]]]
                             }
                         ]
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
@@ -216,11 +216,11 @@ public class SlideControllerTest extends BaseMongoTest {
                         .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(1)))
                 .andExpect(jsonPath("$.slides[0].polygons[0].id").value("a"))
-                .andExpect(jsonPath("$.slides[0].polygons[0].coordinates[0][0]]").value(3))
-                .andExpect(jsonPath("$.slides[0].polygons[0].coordinates[0][1]]").value(31))
+                .andExpect(jsonPath("$.slides[0].polygons[0].coordinates[0][0][0]]").value(3))
+                .andExpect(jsonPath("$.slides[0].polygons[0].coordinates[0][0][1]]").value(31))
                 .andExpect(jsonPath("$.slides[0].polygons[1].id").value("b"))
-                .andExpect(jsonPath("$.slides[0].polygons[1].coordinates[0][0]").value(4))
-                .andExpect(jsonPath("$.slides[0].polygons[1].coordinates[0][1]").value(41));
+                .andExpect(jsonPath("$.slides[0].polygons[1].coordinates[0][0][0]").value(4))
+                .andExpect(jsonPath("$.slides[0].polygons[1].coordinates[0][0][1]").value(41));
     }
 
     @Test
@@ -231,7 +231,7 @@ public class SlideControllerTest extends BaseMongoTest {
                         "id":"a",
                         "color": 100,
                         "polygonId":null,
-                        "coordinates": [[3,31]]
+                        "coordinates": [[[3,31]]]
                     }
                 ]
                 """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
@@ -254,7 +254,7 @@ public class SlideControllerTest extends BaseMongoTest {
                         "id":"a",
                         "color": 100,
                         "polygonId":null,
-                        "coordinates": [[3,31]]
+                        "coordinates": [[[3,31]]]
                     }
                 ]
                 """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
@@ -278,7 +278,7 @@ public class SlideControllerTest extends BaseMongoTest {
                                     "id":"1",
                                     "color": 100,
                                     "polygonId":null,
-                                    "coordinates": [[1,1]]
+                                    "coordinates": [[[1,1]]]
                                 }
                             ]
                         }""").accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
@@ -319,7 +319,7 @@ public class SlideControllerTest extends BaseMongoTest {
                                     "id":"2",
                                     "color": 543,
                                     "polygonId":null,
-                                    "coordinates": [[1,1]]
+                                    "coordinates": [[[1,1]]]
                                 }
                             ]
                         }

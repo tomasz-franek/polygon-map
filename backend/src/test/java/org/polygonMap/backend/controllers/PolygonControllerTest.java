@@ -32,13 +32,14 @@ class PolygonControllerTest extends BaseMongoTest {
 
     @Test
     void savePolygon_should_returnCreated_when_correctRequestData() throws Exception {
-        mockMvc.perform(post("/polygon").content("""
+        mockMvc.perform(post("/polygon").content(String.format("""
                         {
-                            "id":"1",
+                            "id":"%s",
                             "polygonId":"aa",
-                            "coordinates" : [[1,1],[2,2]]
+                            "coordinates" : [[[1,1],[2,2]]]
                         }
-                        """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
+                        """, UUID.randomUUID())).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.polygonId").isString());
     }
 
@@ -46,7 +47,7 @@ class PolygonControllerTest extends BaseMongoTest {
     void getPolygon_should_returnPolygonData_when_callWithExistingPolygonId() throws Exception {
         MvcResult result = mockMvc.perform(post("/polygon").content("""
                         {
-                            "coordinates" : [[1,1],[2,2]]
+                            "coordinates" : [[[1,1],[2,2]]]
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.polygonId").isString())
@@ -59,14 +60,14 @@ class PolygonControllerTest extends BaseMongoTest {
                         get("/polygon/{polygonId}", id).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.polygonId", equalTo(id))).andExpect(jsonPath("$.coordinates").isArray())
-                .andExpect(jsonPath("$.coordinates", hasSize(2))).andReturn();
+                .andExpect(jsonPath("$.coordinates[0]", hasSize(2))).andReturn();
     }
 
     @Test
     void updatePolygon_should_returnNoContent_when_callPolygonUpdated() throws Exception {
         MvcResult result = mockMvc.perform(post("/polygon").content("""
                         {
-                            "coordinates" : [[1,1],[2,2]],
+                            "coordinates" : [[[1,1],[2,2]]],
                             "color": 0
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
@@ -78,7 +79,7 @@ class PolygonControllerTest extends BaseMongoTest {
 
         mockMvc.perform(patch("/polygon/{polygonId}", polygonId).content("""
                         {
-                            "coordinates" : [[3,4],[5,6]],
+                            "coordinates" : [[[3,4],[5,6]]],
                             "color": 1
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
@@ -88,9 +89,11 @@ class PolygonControllerTest extends BaseMongoTest {
                         get("/polygon/{polygonId}", polygonId).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.polygonId", equalTo(polygonId))).andExpect(jsonPath("$.coordinates").isArray())
-                .andExpect(jsonPath("$.coordinates", hasSize(2))).andExpect(jsonPath("$.coordinates[0][0]").value(3))
-                .andExpect(jsonPath("$.coordinates[0][1]").value(4)).andExpect(jsonPath("$.coordinates[1][0]").value(5))
-                .andExpect(jsonPath("$.coordinates[1][1]").value(6));
+                .andExpect(jsonPath("$.coordinates[0]", hasSize(2)))
+                .andExpect(jsonPath("$.coordinates[0][0][0]").value(3))
+                .andExpect(jsonPath("$.coordinates[0][0][1]").value(4))
+                .andExpect(jsonPath("$.coordinates[0][1][0]").value(5))
+                .andExpect(jsonPath("$.coordinates[0][1][1]").value(6));
     }
 
     @Test
