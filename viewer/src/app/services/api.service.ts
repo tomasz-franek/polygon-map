@@ -1,8 +1,12 @@
 import {inject, Injectable} from '@angular/core';
-import {Polygon, PolygonService, SavePolygon201Response} from '../api/polygon';
-import {SearchResult, SearchService} from '../api/search';
-import {SaveSlideShow201Response, SaveSlideStep201Response, Slide, SlideService, SlideShow} from '../api/slide';
 import {Observable} from 'rxjs';
+import {PolygonService} from '../api/api/polygon.service';
+import {SearchService} from '../api/api/search.service';
+import {SlideService} from '../api/api/slide.service';
+import {SearchResult} from '../api/model/searchResult';
+import {SlideShow} from '../api/model/slideShow';
+import {SaveSlideShow201Response} from '../api/model/saveSlideShow201Response';
+import {Polygon, SavePolygon201Response, SaveSlideStep201Response, Slide} from '../api';
 
 @Injectable({
   providedIn: 'root',

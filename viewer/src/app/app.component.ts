@@ -1,12 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {LeafletModule} from '@bluehalo/ngx-leaflet';
 import * as L from 'leaflet';
 import {LatLng, latLng, Polygon, polygon, tileLayer} from 'leaflet';
-import jsonData from '../assets/world_800.json';
-import {v4 as uuid} from 'uuid';
-import {Slide} from './api/slide';
 import {interval, Subscription} from 'rxjs';
 import {ColorUtil} from './utils/color.util';
+import {ApiService} from './services/api.service';
+import {SlideShow} from './api';
 
 @Component({
   selector: 'app-root',
@@ -19,23 +18,24 @@ import {ColorUtil} from './utils/color.util';
 export class AppComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription | undefined;
+  private apiService: ApiService = inject(ApiService);
 
   private map: L.Map | undefined;
-  private countryOrder: string[] = [];
-  // ['Portugal', 'Spain', 'Andorra', 'France', 'Monaco', 'Belgium', 'Netherlands', 'United Kingdom',
-  // 'Ireland', 'Faroe Islands', 'Iceland',
-  // 'Switzerland', 'Liechtenstein', 'Italy', 'Holy See (Vatican City)', 'San Marino', 'Malta', 'Austria', 'Slovenia', 'Croatia', 'Bosnia and Herzegovina',
-  // 'Luxembourg', 'Germany', 'Denmark', 'Czech Republic', 'Poland', 'Slovakia', 'Belarus', 'Lithuania',
-  // 'Latvia', 'Estonia', 'Finland', 'Sweden', 'Norway', 'Hungary', 'Ukraine', 'Republic of Moldova', 'Montenegro', 'Romania', 'Serbia', 'Bulgaria', 'The former Yugoslav Republic of Macedonia',
-  // 'Albania', 'Greece', 'Cyprus', 'Turkey', 'Georgia', 'Armenia', 'Azerbaijan', 'Russia'];
+  private countryOrder: string[] =
+    ['Portugal', 'Spain', 'Andorra', 'France', 'Monaco', 'Belgium', 'Netherlands', 'United Kingdom',
+      'Ireland', 'Faroe Islands', 'Iceland',
+      'Switzerland', 'Liechtenstein', 'Italy', 'Holy See (Vatican City)', 'San Marino', 'Malta', 'Austria', 'Slovenia', 'Croatia', 'Bosnia and Herzegovina',
+      'Luxembourg', 'Germany', 'Denmark', 'Czech Republic', 'Poland', 'Slovakia', 'Belarus', 'Lithuania',
+      'Latvia', 'Estonia', 'Finland', 'Sweden', 'Norway', 'Hungary', 'Ukraine', 'Republic of Moldova', 'Montenegro', 'Romania', 'Serbia', 'Bulgaria', 'The former Yugoslav Republic of Macedonia',
+      'Albania', 'Greece', 'Cyprus', 'Turkey', 'Georgia', 'Armenia', 'Azerbaijan', 'Russia'];
   protected countryMap: Map<string, Polygon> = new Map<string, Polygon>();
-  private polygonCount: number = 0;
+  private polygonCount: number = -1;
   title = 'viewer';
   options = {
     layers: [],
     hideSingleBase: true,
     zoom: 4,
-    center: latLng(51.801919, 19.415062)
+    center: latLng(52, 20)
   };
 
   ngOnInit(): void {
@@ -44,30 +44,8 @@ export class AppComponent implements OnInit, OnDestroy {
       maxZoom: 15,
       attribution: 'OpenStreetMap'
     }))
-    const slide: Slide = this.parseJsonData();
-    slide.polygons.forEach(polygonObject => {
-      const points: LatLng[] = [];
-      if (polygonObject.coordinates[0].length == 2) {
-        polygonObject.coordinates.forEach((item: number[]) => {
-          if (typeof item[0] == 'number' && typeof item[1] == 'number') {
-            points.push(new LatLng(item[0], item[1]));
-          }
-        })
-        let createdPolygon = this.createPolygon(points);
-        this.countryMap.set(polygonObject.polygonId || '', createdPolygon);
-      } else {
-        const polyLinePoints: any = [];
-        polygonObject.coordinates.forEach((coordinate: any[]) => {
-          const points: LatLng[] = [];
-          coordinate.forEach((item: any[]) => {
-            points.push(new LatLng(item[0], item[1]));
-          })
-          polyLinePoints.push(points);
-        })
-        let createdPolygon = this.createPolygon(polyLinePoints);
-        this.countryMap.set(polygonObject.polygonId || '', createdPolygon);
-      }
-    })
+    this.parseJsonData();
+
     this.subscription = interval(100).subscribe(() => {
       this.addNextPolygon();
     });
@@ -80,43 +58,37 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 
-  parseJsonData(): Slide {
-    let slide: Slide = {
-      slideId: uuid(),
-      polygons: []
-    };
-    jsonData.features.forEach((feature: any) => {
-
-      if (feature.geometry.type == 'Polygon') {
-        const points: Array<Array<number>> = [];
-        feature.geometry.coordinates.forEach((coordinate: any) => {
-          coordinate.forEach((item: any) => {
-            points.push([item[1], item[0]]);
-          })
-        })
-        slide.polygons.push({coordinates: points, polygonId: feature.properties.NAME, id: uuid()});
-      }
-      if (feature.geometry.type == 'MultiPolygon') {
-        const polyLinePoints: any = [];
-        feature.geometry.coordinates.forEach((coordinate: any) => {
-          coordinate.forEach((item: any) => {
-            const points: Array<Array<number>> = [];
-            if (item instanceof Array) {
-              item.forEach((multiItem: any) => {
-                if (multiItem instanceof Array) {
-                  if (typeof multiItem[0] == 'number' && typeof multiItem[1] == 'number') {
-                    points.push([multiItem[1], multiItem[0]]);
-                  }
-                }
+  parseJsonData() {
+    this.apiService.getSlideShow("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1").subscribe((slideSow: SlideShow) => {
+      if (slideSow.slides !== undefined && slideSow.slides.length > 0) {
+        slideSow.slides[0].polygons.forEach(polygonObject => {
+          const points: LatLng[] = [];
+          let createdPolygon = undefined;
+          if (polygonObject.coordinates.length == 1) {
+            polygonObject.coordinates[0].forEach((item: number[]) => {
+              if (typeof item[0] == 'number' && typeof item[1] == 'number') {
+                points.push(new LatLng(item[0], item[1]));
+              }
+            })
+            createdPolygon = this.createPolygon(points);
+          } else {
+            const polyLinePoints: any = [];
+            polygonObject.coordinates.forEach((coordinate: number[][]) => {
+              const points: LatLng[] = [];
+              coordinate.forEach((item: any[]) => {
+                points.push(new LatLng(item[0], item[1]));
               })
-            }
-            polyLinePoints.push(points);
-          })
+
+              polyLinePoints.push(points);
+            });
+            createdPolygon = this.createPolygon(polyLinePoints);
+          }
+          if (createdPolygon != undefined) {
+            this.countryMap.set(polygonObject.polygonId || '', createdPolygon);
+          }
         })
-        slide.polygons.push({coordinates: polyLinePoints, polygonId: feature.properties.NAME, id: uuid()});
       }
     })
-    return slide;
   }
 
   private createPolygon(points: LatLng[]): Polygon {
@@ -134,41 +106,44 @@ export class AppComponent implements OnInit, OnDestroy {
         this.polygonCount += 1;
         if (polygon != undefined && this.map != undefined) {
           polygon.addTo(this.map);
+          let key = this.countryOrder[this.polygonCount - 1];
+          let centerPoints = polygon.getBounds().getCenter();
+          var tooltip = L.tooltip()
+            .setLatLng(centerPoints)
+            .setContent(key);
+          tooltip.options.direction = "top";
+          tooltip.addTo(this.map);
         }
       } else {
-        if (this.subscription) {
-          this.subscription.unsubscribe();
-        }
-        // this.polygonCount = 0;
-        // this.countryMap.forEach((key, _) => {
-        //   if (this.map != undefined) {
-        //     key.removeFrom(this.map);
-        //   }
-        // });
+        // if (this.subscription) {
+        //   this.subscription.unsubscribe();
+        // }
+        this.polygonCount = -1;
+        this.countryMap.forEach((key, _) => {
+          if (this.map != undefined) {
+            key.removeFrom(this.map);
+          }
+        });
       }
     } else {
       if (this.polygonCount < this.countryMap.size) {
         let key = Array.from(this.countryMap.keys())[this.polygonCount];
-        console.log(key);
         let polygon = this.countryMap.get(key) || undefined;
         this.polygonCount += 1;
         if (polygon != undefined && this.map != undefined) {
           polygon.addTo(this.map);
-          var tooltip = L.tooltip()
-            .setLatLng(polygon.getCenter())
-            .setContent(key)
-            .addTo(this.map);
+          L.tooltip().setLatLng(polygon.getCenter()).setContent(key).addTo(this.map);
         }
       } else {
-        if (this.subscription) {
-          this.subscription.unsubscribe();
-        }
-        // this.polygonCount = 0;
-        // this.countryMap.forEach((key, _) => {
-        //   if (this.map != undefined) {
-        //     key.removeFrom(this.map);
-        //   }
-        // });
+        // if (this.subscription) {
+        //   this.subscription.unsubscribe();
+        // }
+        this.polygonCount = -1;
+        this.countryMap.forEach((key, _) => {
+          if (this.map != undefined) {
+            key.removeFrom(this.map);
+          }
+        });
       }
     }
   }

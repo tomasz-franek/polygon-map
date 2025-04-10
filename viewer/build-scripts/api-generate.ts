@@ -11,6 +11,4 @@ function executeShellScript(script) {
   execSync(script, { stdio: 'inherit' });
 }
 
-executeShellScript('npm run generate:polygon-api');
 executeShellScript('npm run generate:search-api');
-executeShellScript('npm run generate:slide-api');
