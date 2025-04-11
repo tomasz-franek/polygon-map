@@ -37,16 +37,14 @@ public class SlideControllerTest extends BaseMongoTest {
             {
                 "id":"%s",
                 "slideShowId": "%s",
-                "centerPoint": [11,21],
+                "centerPoint": [11.0,21.0],
                 "mapZoom":3,
                 "title":"test",
                 "description":"description test",
                 "version":"1.0.0",
-                "createdDate":"2025-10-10",
                 "createdUser": "createdUser",
                 "nextVersion":null,
                 "prevVersion":null,
-                "lastModifiedDate":"2025-10-10",
                 "lastModifiedUser": "lastModifiedUser",
                 "hash":"xxx",
                 "slides":[
@@ -57,13 +55,13 @@ public class SlideControllerTest extends BaseMongoTest {
                                 "id":"1",
                                 "color": 100,
                                 "polygonId":"aaa",
-                                "coordinates": [[[1,1]]]
+                                "coordinates": [[[1.0,1.0]]]
                             },
                             {
                                 "id":"2",
                                 "color": 200,
                                 "polygonId":"bbb",
-                                "coordinates": [[[2,2]]]
+                                "coordinates": [[[2.0,2.0]]]
                             }
                         ]
                     }
@@ -118,7 +116,7 @@ public class SlideControllerTest extends BaseMongoTest {
                 .andExpect(content().contentType(APPLICATION_JSON)).andReturn();
         String actualSlideShow = mvcResult.getResponse().getContentAsString();
         String expectedSlideShow = String.format(requestTemplate, id, slideShowId);
-        JSONAssert.assertEquals(expectedSlideShow, actualSlideShow, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(expectedSlideShow, actualSlideShow, JSONCompareMode.LENIENT);
     }
 
     @Test
@@ -387,6 +385,6 @@ public class SlideControllerTest extends BaseMongoTest {
                 .andExpect(status().isOk()).andExpect(content().contentType(APPLICATION_JSON)).andReturn();
         String actualSlideShow = mvcResult.getResponse().getContentAsString();
         String expectedSlideShow = String.format(requestTemplate, id, slideShowId);
-        JSONAssert.assertEquals(expectedSlideShow, actualSlideShow, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(expectedSlideShow, actualSlideShow, JSONCompareMode.LENIENT);
     }
 }

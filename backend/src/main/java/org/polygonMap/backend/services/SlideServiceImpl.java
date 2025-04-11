@@ -11,6 +11,8 @@ import org.polygonMap.model.SlideShow;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +37,7 @@ public class SlideServiceImpl implements SlideService {
     @CacheEvict(cacheNames = "slideShows", allEntries = true)
     public String saveSlideShow(SlideShow slideShow) {
         slideShow.setSlideShowId(UUID.randomUUID().toString());
+        slideShow.setCreatedDate(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         return slideShowRepository.insert(slideShow).getSlideShowId();
     }
 
@@ -44,7 +47,7 @@ public class SlideServiceImpl implements SlideService {
         SlideShow slideShowEntity = getSlideShow(slideShowId);
         slideShowEntity.setSlides(slideShow.getSlides());
         slideShowEntity.setCenterPoint(slideShow.getCenterPoint());
-        slideShowRepository.save(slideShowEntity);
+        updateLastModifiedDateAndSave(slideShowEntity);
     }
 
 
@@ -54,7 +57,7 @@ public class SlideServiceImpl implements SlideService {
         SlideShow slideShowEntity = getSlideShow(slideShowId);
         boolean removed = slideShowEntity.getSlides().removeIf(slide -> slide.getSlideId().equals(slideId));
         if (removed) {
-            slideShowRepository.save(slideShowEntity);
+            updateLastModifiedDateAndSave(slideShowEntity);
         }
         return removed;
     }
@@ -69,7 +72,7 @@ public class SlideServiceImpl implements SlideService {
                 Slide currentStep = slideShowEntity.getSlides().get(i);
                 Slide newStep = copySlide(currentStep);
                 slideShowEntity.getSlides().add(i + 1, newStep);
-                slideShowRepository.save(slideShowEntity);
+                updateLastModifiedDateAndSave(slideShowEntity);
                 return true;
             }
         }
@@ -89,7 +92,7 @@ public class SlideServiceImpl implements SlideService {
                 Slide currentStep = slideShowEntity.getSlides().get(i);
                 currentStep.getPolygons().clear();
                 currentStep.getPolygons().addAll(polygons);
-                slideShowRepository.save(slideShowEntity);
+                updateLastModifiedDateAndSave(slideShowEntity);
                 return true;
             }
         }
@@ -109,8 +112,11 @@ public class SlideServiceImpl implements SlideService {
         SlideShow slideShowEntity = getSlideShow(slideShowId);
 
         slideShowEntity.getSlides().add(copySlide(slide));
+        return updateLastModifiedDateAndSave(slideShowEntity).getId();
+    }
 
-        slideShowRepository.save(slideShowEntity);
-        return slideShowEntity.getId();
+    private SlideShow updateLastModifiedDateAndSave(SlideShow slideShowEntity) {
+        slideShowEntity.setLastModifiedDate(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        return slideShowRepository.save(slideShowEntity);
     }
 }
