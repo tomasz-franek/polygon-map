@@ -145,6 +145,8 @@
                                             "bsonType": ["array","double","int"]
                                             "items": {
                                                 "bsonType": ["double","int"]
+                                                "minimum": -180,
+                                                "maximum": 180
                                             }
                                         }
                                     }
