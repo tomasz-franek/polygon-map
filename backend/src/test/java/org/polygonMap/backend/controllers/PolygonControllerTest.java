@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -97,6 +98,21 @@ class PolygonControllerTest extends BaseMongoTest {
     }
 
     @Test
+    void savePolygon_should_returnBadRequest_when_validationErrorForRequest() throws Exception {
+        mockMvc.perform(post("/polygon").content(String.format("""
+                                {
+                                    "id":"%s",
+                                    "polygonId":"%s",
+                                    "coordinates" : [[[1,1],[2,2],[340,120]]],
+                                    "color": 0
+                                }
+                                """, UUID.randomUUID(), UUID.randomUUID())).accept(APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(content().string(containsString("'Document failed validation'")));
+    }
+
+    @Test
     void updatePolygon_should_returnNoNotFound_when_callWithNonExistingPolygonId() throws Exception {
         String polygonId = UUID.randomUUID().toString();
         mockMvc.perform(patch("/polygon/{polygonId}", polygonId).content("""
@@ -114,7 +130,7 @@ class PolygonControllerTest extends BaseMongoTest {
                             "color": 1
                         }
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
-                .andExpect(content().string(String.format("Polygon with id = '%s' not found.", polygonId)));
+                .andExpect(jsonPath("$.message").value(String.format("Polygon with id = '%s' not found.", polygonId)));
 
     }
 }

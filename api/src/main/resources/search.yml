@@ -47,6 +47,16 @@ paths:
                 $ref: '#/components/schemas/SlideShow'
         '404':
           description: SlideShow not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
     patch:
       operationId: updateSlideShow
       tags:
@@ -67,6 +77,16 @@ paths:
           description: updated SlideShow object
         '404':
           description: SlideShow not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /slides:
     post:
       operationId: saveSlideShow
@@ -108,6 +128,17 @@ paths:
           description: Slide object deleted
         '404':
           description: SlideShow or MapStep not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
     post:
       operationId: duplicateSlideStep
       parameters:
@@ -128,6 +159,17 @@ paths:
           description: StepSize duplicated
         '404':
           description: SlideShow or MapStep not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
     patch:
       operationId: updateSlide
       parameters:
@@ -155,6 +197,17 @@ paths:
           description: object updated
         '404':
           description: SlideShow or MapStep not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
   /slides/{slideShowId}/slide:
     post:
       operationId: saveSlideStep
@@ -183,6 +236,17 @@ paths:
                     $ref: '#/components/schemas/SlideId'
         '404':
           description: SlideShow not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
   /polygon/{polygonId}:
     get:
       operationId: getPolygon
@@ -203,6 +267,17 @@ paths:
                 $ref: '#/components/schemas/Polygon'
         '404':
           description: Polygon not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
     patch:
       operationId: updatePolygon
       parameters:
@@ -223,6 +298,17 @@ paths:
           description: Polygon updated
         '404':
           description: Polygon not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '400':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
   /polygon:
     post:
       operationId: savePolygon
@@ -357,3 +443,8 @@ components:
       maxItems: 2
     PolygonId:
       type: string
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
