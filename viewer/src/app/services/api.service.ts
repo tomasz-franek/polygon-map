@@ -1,23 +1,25 @@
 import {inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {PolygonService} from '../api/api/polygon.service';
-import {SearchService} from '../api/api/search.service';
-import {SlideService} from '../api/api/slide.service';
-import {SearchResult} from '../api/model/searchResult';
-import {SlideShow} from '../api/model/slideShow';
-import {SaveSlideShow201Response} from '../api/model/saveSlideShow201Response';
-import {Polygon, SavePolygon201Response, SaveSlideStep201Response, Slide} from '../api';
+import {
+  Polygon,
+  PolygonsService,
+  SavePolygon201Response,
+  SaveSlideShow201Response,
+  SaveSlideStep201Response,
+  SearchResult,
+  SearchService,
+  Slide,
+  SlideShow,
+  SlidesService
+} from '../api';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  private polygonService: PolygonService = inject(PolygonService);
+  private polygonService: PolygonsService = inject(PolygonsService);
   private searchService: SearchService = inject(SearchService);
-  private slideService: SlideService = inject(SlideService);
-
-  constructor() {
-  }
+  private slideService: SlidesService = inject(SlidesService);
 
   searchSlides(slideName: string): Observable<SearchResult[]> {
     return this.searchService.getSearchResultData(slideName);
@@ -31,19 +33,19 @@ export class ApiService {
     return this.slideService.saveSlideShow(slideShow);
   }
 
-  updateSlide(slideShowId: string, slideId: string, polygons: Polygon[]): Observable<any> {
+  updateSlide(slideShowId: string, slideId: string, polygons: Polygon[]): Observable<void> {
     return this.slideService.updateSlide(slideShowId, slideId, polygons);
   }
 
-  updateSlideShow(slideShowId: string, slideShow: SlideShow): Observable<any> {
+  updateSlideShow(slideShowId: string, slideShow: SlideShow): Observable<void> {
     return this.slideService.updateSlideShow(slideShowId, slideShow);
   }
 
-  deleteSlideStep(slideShowId: string, slideId: string): Observable<any> {
+  deleteSlideStep(slideShowId: string, slideId: string): Observable<void> {
     return this.slideService.deleteSlideStep(slideShowId, slideId);
   }
 
-  duplicateSlideStep(slideShowId: string, slideId: string): Observable<any> {
+  duplicateSlideStep(slideShowId: string, slideId: string): Observable<void> {
     return this.slideService.duplicateSlideStep(slideShowId, slideId);
   }
 
@@ -59,7 +61,7 @@ export class ApiService {
     return this.polygonService.savePolygon(polygon);
   }
 
-  updatePolygon(polygonId: string, polygon: Polygon): Observable<any> {
+  updatePolygon(polygonId: string, polygon: Polygon): Observable<void> {
     return this.polygonService.updatePolygon(polygonId, polygon);
   }
 }

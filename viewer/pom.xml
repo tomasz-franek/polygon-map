@@ -57,6 +57,16 @@
             </configuration>
           </execution>
           <execution>
+            <id>lint</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <arguments>run ng lint --fix=true</arguments>
+            </configuration>
+          </execution>
+          <execution>
             <id>npm build</id>
             <goals>
               <goal>npm</goal>
@@ -76,6 +86,7 @@
               <arguments>run test</arguments>
             </configuration>
           </execution>
+
         </executions>
       </plugin>
     </plugins>
