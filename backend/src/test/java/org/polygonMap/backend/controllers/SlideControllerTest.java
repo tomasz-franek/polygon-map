@@ -73,8 +73,8 @@ public class SlideControllerTest extends BaseMongoTest {
 
     @Test
     void saveSlideShow_should_returnCreated_when_correctRequestData() throws Exception {
-        mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, UUID.randomUUID(), null)).accept(APPLICATION_JSON)
+        mockMvc.perform(post("/slides").content(String.format(requestTemplate, UUID.randomUUID(), null))
+                        .accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString());
     }
@@ -84,20 +84,20 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
         mockMvc.perform(
-                        patch("/slide/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, slideShowId))
+                        patch("/slides/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, slideShowId))
                                 .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void updateSlideShow_should_returnNotFound_when_methodCalledWithIncorrectSlideShowId() throws Exception {
-        mockMvc.perform(patch("/slide/{slideShowId}", "wrongId").content(
+        mockMvc.perform(patch("/slides/{slideShowId}", "wrongId").content(
                         String.format(requestTemplate, UUID.randomUUID(), UUID.randomUUID())).accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
     }
@@ -107,13 +107,13 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
 
-        mvcResult = mockMvc.perform(get("/slide/{slideShowId}", slideShowId).accept(APPLICATION_JSON)
+        mvcResult = mockMvc.perform(get("/slides/{slideShowId}", slideShowId).accept(APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON)).andReturn();
         String actualSlideShow = mvcResult.getResponse().getContentAsString();
@@ -123,8 +123,8 @@ public class SlideControllerTest extends BaseMongoTest {
 
     @Test
     void getSlideShow_should_returnNotFound_when_methodCalledWithIncorrectSlideShowId() throws Exception {
-        mockMvc.perform(
-                        get("/slide/{slideShowId}", "wrongId").accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/slides/{slideShowId}", "wrongId").accept(APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("SlideShow with id = 'wrongId' not found."));
 
@@ -135,7 +135,7 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         mockMvc.perform(
-                        post("/slide/{slideShowId}/slide/{slideId}", "1", "1").content(String.format(requestTemplate, id, ""))
+                        post("/slides/{slideShowId}/slide/{slideId}", "1", "1").content(String.format(requestTemplate, id, ""))
                                 .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
@@ -146,13 +146,13 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
 
-        mockMvc.perform(post("/slide/{slideShowId}/slide/{slideId}", slideShowId, "wrong_slide_id").content(
+        mockMvc.perform(post("/slides/{slideShowId}/slide/{slideId}", slideShowId, "wrong_slide_id").content(
                         String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
     }
@@ -162,20 +162,20 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
-        mockMvc.perform(get("/slide/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
+        mockMvc.perform(get("/slides/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
                         .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(1)));
 
-        mockMvc.perform(post("/slide/{slideShowId}/slide/{slideId}", slideShowId, "1").content(
+        mockMvc.perform(post("/slides/{slideShowId}/slide/{slideId}", slideShowId, "1").content(
                         String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/slide/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
+        mockMvc.perform(get("/slides/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
                         .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(2)));
     }
@@ -185,16 +185,16 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
-        mockMvc.perform(get("/slide/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
+        mockMvc.perform(get("/slides/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
                         .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(1)));
 
-        mockMvc.perform(patch("/slide/{slideShowId}/slide/{slideId}", slideShowId, "1").content("""
+        mockMvc.perform(patch("/slides/{slideShowId}/slide/{slideId}", slideShowId, "1").content("""
                         [
                             {
                                 "id":"a",
@@ -212,7 +212,7 @@ public class SlideControllerTest extends BaseMongoTest {
                         """).accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/slide/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
+        mockMvc.perform(get("/slides/{slideShowId}", slideShowId).content(String.format(requestTemplate, id, ""))
                         .accept(APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(1)))
                 .andExpect(jsonPath("$.slides[0].polygons[0].id").value("a"))
@@ -225,7 +225,7 @@ public class SlideControllerTest extends BaseMongoTest {
 
     @Test
     void updateSlide_should_returnNotFound_when_methodCalledWithIncorrectSlideShowId() throws Exception {
-        mockMvc.perform(patch("/slide/{slideShowId}/slide/{slideId}", "incorrect_slide_show_id", "1").content("""
+        mockMvc.perform(patch("/slides/{slideShowId}/slide/{slideId}", "incorrect_slide_show_id", "1").content("""
                 [
                     {
                         "id":"a",
@@ -243,12 +243,12 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
-        mockMvc.perform(patch("/slide/{slideShowId}/slide/{slideId}", slideShowId, "incorrect_slide_id").content("""
+        mockMvc.perform(patch("/slides/{slideShowId}/slide/{slideId}", slideShowId, "incorrect_slide_id").content("""
                 [
                     {
                         "id":"a",
@@ -263,14 +263,14 @@ public class SlideControllerTest extends BaseMongoTest {
 
     @Test
     void updateSlide_should_returnBadRequest_when_methodCalledWithEmptyPolygonList() throws Exception {
-        mockMvc.perform(patch("/slide/{slideShowId}/slide/{slideId}", "2", "1").content("[]").accept(APPLICATION_JSON)
+        mockMvc.perform(patch("/slides/{slideShowId}/slide/{slideId}", "2", "1").content("[]").accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
 
     }
 
     @Test
     void saveSlideStep_should_returnNotFound_when_methodCalledWithWrongSlideShowId() throws Exception {
-        mockMvc.perform(post("/slide/{slideShowId}/slide", "wrong_slide_show_id").content("""
+        mockMvc.perform(post("/slides/{slideShowId}/slide", "wrong_slide_show_id").content("""
                         {
                             "slideId":"1",
                             "polygons":[
@@ -291,12 +291,12 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
-        mockMvc.perform(post("/slide/{slideShowId}/slide", slideShowId).content("{}").accept(APPLICATION_JSON)
+        mockMvc.perform(post("/slides/{slideShowId}/slide", slideShowId).content("{}").accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
 
     }
@@ -306,12 +306,12 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
-        mockMvc.perform(post("/slide/{slideShowId}/slide", slideShowId).content("""
+        mockMvc.perform(post("/slides/{slideShowId}/slide", slideShowId).content("""
                         {
                             "slideId":"1",
                             "polygons":[
@@ -331,7 +331,7 @@ public class SlideControllerTest extends BaseMongoTest {
     @Test
     void deleteSlideStep_should_returnNotFound_when_methodCalledWithWrongSlideShowId() throws Exception {
         mockMvc.perform(
-                delete("/slide/{slideShowId}/slide/{slideId}", "wrong_slide_show_id", "1").accept(APPLICATION_JSON)
+                delete("/slides/{slideShowId}/slide/{slideId}", "wrong_slide_show_id", "1").accept(APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
 
     }
@@ -341,13 +341,13 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
         mockMvc.perform(
-                delete("/slide/{slideShowId}/slide/{slideId}", slideShowId, "wrong_slide_id").accept(APPLICATION_JSON)
+                delete("/slides/{slideShowId}/slide/{slideId}", slideShowId, "wrong_slide_id").accept(APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
 
     }
@@ -357,15 +357,15 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
-        mockMvc.perform(delete("/slide/{slideShowId}/slide/{slideId}", slideShowId, "1").accept(APPLICATION_JSON)
+        mockMvc.perform(delete("/slides/{slideShowId}/slide/{slideId}", slideShowId, "1").accept(APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/slide/{slideShowId}", slideShowId).accept(APPLICATION_JSON)
+        mockMvc.perform(get("/slides/{slideShowId}", slideShowId).accept(APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.slides").isArray()).andExpect(jsonPath("$.slides", hasSize(0)));
 
@@ -376,13 +376,13 @@ public class SlideControllerTest extends BaseMongoTest {
         String id = UUID.randomUUID().toString();
 
         MvcResult mvcResult = mockMvc.perform(
-                        post("/slide").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
+                        post("/slides").content(String.format(requestTemplate, id, "")).accept(APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$.slideShowId").isString())
                 .andReturn();
         String slideShowId = JsonPath.compile("$.slideShowId").read(mvcResult.getResponse().getContentAsString());
 
-        mvcResult = mockMvc.perform(get("/slide/{slideShowId}", slideShowId).accept(APPLICATION_JSON)
+        mvcResult = mockMvc.perform(get("/slides/{slideShowId}", slideShowId).accept(APPLICATION_JSON)
                         .header(HttpHeaders.ACCEPT_ENCODING, "gzip").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().contentType(APPLICATION_JSON)).andReturn();
         String actualSlideShow = mvcResult.getResponse().getContentAsString();

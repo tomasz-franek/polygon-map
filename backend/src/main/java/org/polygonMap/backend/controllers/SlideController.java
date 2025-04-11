@@ -1,7 +1,7 @@
 package org.polygonMap.backend.controllers;
 
 import lombok.AllArgsConstructor;
-import org.polygonMap.api.SlideApi;
+import org.polygonMap.api.SlidesApi;
 import org.polygonMap.backend.services.SlideService;
 import org.polygonMap.model.Polygon;
 import org.polygonMap.model.SaveSlideShow201Response;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @Controller
 @AllArgsConstructor
-public class SlideController implements SlideApi {
+public class SlideController implements SlidesApi {
 
     private final SlideService slideService;
 
