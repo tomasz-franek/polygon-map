@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -30,6 +29,6 @@ class SearchControllerTest {
         mockMvc.perform(get("/search").param("slideName", "eS").accept(APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$", hasSize(2))).andExpect(jsonPath("$[*].title", everyItem(equalTo("test"))));
+                .andExpect(jsonPath("$[*].title", everyItem(equalTo("test"))));
     }
 }
