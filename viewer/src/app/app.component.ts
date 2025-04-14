@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription | undefined;
   private _storeMap$: Store<MapState> = inject(Store);
+  private showTooltip: boolean = false;
 
   private map: L.Map | undefined;
   private countryOrder: string[] =
@@ -117,7 +118,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.polygonCount += 1;
         if (polygon != undefined && this.map != undefined) {
           polygon.addTo(this.map);
-          this.createTooltip(polygon, this.map, key);
+          if (this.showTooltip) {
+            this.createTooltip(polygon, this.map, key);
+          }
         }
       } else {
         this.endSubscription();
@@ -129,7 +132,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.polygonCount += 1;
         if (polygon != undefined && this.map != undefined) {
           polygon.addTo(this.map);
-          this.createTooltip(polygon, this.map, key);
+          if (this.showTooltip) {
+            this.createTooltip(polygon, this.map, key);
+          }
         }
       } else {
         this.endSubscription();
