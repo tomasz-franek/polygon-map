@@ -1,4 +1,7 @@
-# Drawing polygons on Map
+# Application for drawing colored map
+
+Example map
+![Europe map](doc/color-map.png "Title")
 
 ### Requirements:
 
@@ -8,9 +11,10 @@
 
 ### Used components
 
-- Map [OpenStreetMap:]
-- Library leaflet
+- Map [OpenStreetMap](https://www.openstreetmap.org/)
+- Library [leaflet](https://leafletjs.com)
 - Bootstrap
+- Europe map based on GeoJSON data [map-of-europe](https://github.com/leakyMirror/map-of-europe)
 
 ### Start backend
 
