@@ -8,7 +8,7 @@ import {SlideShow} from './api';
 import {MapUtil} from './utils/map.util';
 import {Store} from '@ngrx/store';
 import {getShowSelector, MapState} from './state/map/map.selectors';
-import {retrieveSlideShow} from './state/map/map.action';
+import {retrieveSlideShow, setSlidesCount} from './state/map/map.action';
 import {CommonModule} from '@angular/common';
 
 @Component({
@@ -57,6 +57,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this._storeMap$.dispatch(retrieveSlideShow({slideShowId}));
     this._storeMap$.select(getShowSelector).subscribe((slideShow: SlideShow | undefined) => {
       if (slideShow != undefined) {
+        if (slideShow.slides != undefined) {
+          this._storeMap$.dispatch(setSlidesCount({slidesCount: slideShow.slides?.length}))
+        }
         this.addSlideShowToMap(slideShow);
       }
     })
@@ -106,6 +109,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   addNextPolygon() {
+    let count = this._storeMap$.select(setSlidesCount);
     if (this.countryOrder.length > 0) {
       if (this.polygonCount < this.countryOrder.length) {
         const key = this.countryOrder[this.polygonCount];
