@@ -1,10 +1,18 @@
 import {TestBed} from '@angular/core/testing';
 import {AppComponent} from './app.component';
+import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import {initialMapState} from './state/map/map.reducer';
+import {provideMockStore} from '@ngrx/store/testing';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [
+        FormBuilder,
+        ReactiveFormsModule,
+        provideMockStore({initialState: initialMapState}),
+      ],
     }).compileComponents();
   });
 
@@ -20,10 +28,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('viewer');
   });
 
-  it('should render title', () => {
+  it('should contains map div', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('viewer');
+    expect(compiled.querySelector('map'));
   });
 });
