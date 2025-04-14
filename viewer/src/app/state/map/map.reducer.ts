@@ -24,7 +24,7 @@ export const mapReducer = createReducer(
   on(retrievedSlideShowSuccess,(state,action): MapState=>{
     return {...state,slideShow:action.slideShow};
   }),
-  on(nextSlide, (state, action): MapState => {
+  on(nextSlide, (state): MapState => {
     if (state.slidesCount > 0)
       if (state.currentSlide < state.slidesCount) {
         return {...state, currentSlide: state.currentSlide + 1};
@@ -37,10 +37,10 @@ export const mapReducer = createReducer(
   on(setSlidesCount, (state, action) => {
     return {...state, slidesCount: action.slidesCount};
   }),
-  on(selectFirstSlide, (state, action) => {
+  on(selectFirstSlide, (state) => {
     return {...state, currentSlide: 0};
   }),
-  on(selectLastSlide, (state, action) => {
+  on(selectLastSlide, (state) => {
     return {...state, currentSlide: state.slidesCount - 1};
   })
 )

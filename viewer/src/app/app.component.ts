@@ -24,7 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription | undefined;
   private _storeMap$: Store<MapState> = inject(Store);
-  private showTooltip: boolean = false;
+  private showTooltip = false;
 
   private map: L.Map | undefined;
   private countryOrder: string[] =
@@ -81,7 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
           const polyLinePoints: L.LatLng[][] = [];
           polygonObject.coordinates.forEach((coordinate: number[][]) => {
             const points: LatLng[] = [];
-            coordinate.forEach((item: any[]) => {
+            coordinate.forEach((item: number[]) => {
               this.addPoint(points, item);
             })
             polyLinePoints.push(points);
@@ -110,7 +110,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   addNextPolygon() {
-    let count = this._storeMap$.select(setSlidesCount);
     if (this.countryOrder.length > 0) {
       if (this.polygonCount < this.countryOrder.length) {
         const key = this.countryOrder[this.polygonCount];
